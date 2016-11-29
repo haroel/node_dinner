@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>创建房号</title>
+</head>
+<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<link href="zeroModal/zeroModal.css" rel="stylesheet">
+<script src="zeroModal/zeroModal.js"></script>
+<script src="js/_$lib.js"></script>
+<style>
+    body
+    {
+        background-color:#eee;
+    }
+    div.margin-top
+    {
+        margin-top:70px;
+    }
+    div.margin-gap
+    {
+        margin-top:20px;
+    }
+</style>
+<script>
+    $.get("_footer.html",function(data){
+        $("#foot").html(data);
+    });
+
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
+    function createRoom()
+    {
+        var roomId = $("#roomInput")[0].value;
+        if (!roomId)
+        {
+            errorDialog("请输入有效房号！");
+            return;
+        }
+        var reg = /^\d{6}$/;
+        if (!reg.test(roomId))
+        {
+            errorDialog("只能输入数字！");
+            return;
+        }
+        var dinnerUrlInput = $("#dinnerUrlInput")[0].value;
+        if (!dinnerUrlInput || dinnerUrlInput.length < 1)
+        {
+            errorDialog("请输入餐厅外链！");
+            return;
+        }
+        var validTimeInput = $("#validTimeInput")[0].value;
+        if (!validTimeInput || validTimeInput.length < 1)
+        {
+            errorDialog("请输入一个有效时间！");
+            return;
+        }
+        var logInput = $("#logInput")[0].value;
+
+        // 发送请求
+
+    }
+</script>
+<body>
+<div class="container margin-top">
+    <div class="row">
+        <div class="col-xs-4 " align="right" style="padding:10px;height:auto;" >
+           输入房号
+        </div>
+        <div class="col-xs-4" align="left">
+            <input id="roomInput" type="text" maxlength="6" class="form-control" width="200" data-toggle="tooltip" data-placement="top" title="6位有效数字">
+        </div>
+    </div>
+    <div class="row margin-gap">
+        <div class="col-xs-4 " align="right" style="padding:10px;height:auto;" >
+            订餐链接
+        </div>
+        <div class="col-xs-4" align="left">
+            <input id="dinnerUrlInput" type="text" class="form-control" data-toggle="tooltip" data-placement="top" title="饿了么餐厅链接">
+        </div>
+    </div>
+    <div class="row margin-gap">
+        <div class="col-xs-4 " align="right" style="padding:10px;height:auto;" >
+            房间有效时间
+        </div>
+        <div class="col-xs-4" align="left">
+            <input id="validTimeInput" type="text" class="form-control" data-toggle="tooltip" data-placement="top" value="180" title="以分钟为单位,超时将自动删除">
+        </div>
+    </div>
+    <div class="row margin-gap">
+        <div class="col-xs-4 " align="right" style="padding:10px;height:auto;" >公告说明</div>
+        <div class="col-xs-6 ">
+            <textarea class="form-control" rows="5" id="logInput"></textarea>
+        </div>
+    </div>
+    <div class="row margin-gap">
+        <div class="col-xs-4 " ></div>
+        <div class="col-xs-2 ">
+            <button class="btn btn-block btn-success" type="button" width="200" onclick="createRoom()">
+                <span class="glyphicon glyphicon-send"></span> 提交</button>
+        </div>
+    </div>
+</div>
+<div id="foot"/>
+</body>
+</html>

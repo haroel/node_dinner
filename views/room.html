@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>NO.{roomId}</title>
+</head>
+<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<link href="zeroModal/zeroModal.css" rel="stylesheet">
+<script src="zeroModal/zeroModal.js"></script>
+<script src="js/_$lib.js"></script>
+<style>
+    body
+    {
+        background-color:#eee;
+    }
+    div.margin-top
+    {
+        margin-top:70px;
+    }
+    div.margin-gap
+    {
+        margin-top:20px;
+    }
+</style>
+<script>
+    $.get("_footer.html",function(data)
+    {
+        $("#foot").html(data);
+    });
+
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
+    function createRoom()
+    {
+
+    }
+</script>
+<body>
+    <div id="userInfo"></div>
+    <div id="menuList"></div>
+    <div id="foot"></div>
+</body>
+</html>

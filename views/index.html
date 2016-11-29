@@ -2,71 +2,94 @@
 <html>
 <head lang="zh">
     <meta charset="UTF-8">
-    <title>大鸡兄</title>
+    <title>E</title>
 </head>
 <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
 <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
 <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<link href="zeroModal/zeroModal.css" rel="stylesheet">
+<script src="zeroModal/zeroModal.js"></script>
+<script src="js/_$lib.js"></script>
 <style>
     body
     {
         background-color:#eee;
+        background-image: url(img/bg.png);
+        background-repeat:no-repeat;
+        background-position:center;
+        -webkit-background-size:cover;
+        background-size:cover;
     }
+    a{
+        font-size: 14px;
+    }
+    a:link {color:#ddd;}      /* 未访问链接*/
+    a:visited {color:#00f100;}  /* 已访问链接 */
+    a:hover {color:#ffffff;}  /* 鼠标移动到链接上 */
+    a:active {color:#00ff00;}  /* 鼠标点击时 */
     div.margin-top
     {
         margin-top:100px;
     }
+    div.margin-gap
+    {
+        margin-top:20px;
+    }
 </style>
 <script>
+
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
+
     function createRoom()
     {
-        alert("创建新房间");
+        infoDialog("创建新房间");
     }
     function enterRoom()
     {
         var roomId = $("#roomInput")[0].value;
         if (!roomId)
         {
-            alert("请输入房号！");
+            errorDialog("请输入有效房号！");
             return;
         }
         var reg = /^\d{6}$/;
         if (!reg.test(roomId))
         {
-            alert("只能输入数字！");
+            errorDialog("只能输入数字！");
             return;
         }
-        alert("创建新房间" + roomId);
+        successDialog("创建新房间" + roomId);
     }
 </script>
 <body>
-<div>
+<div >
     <div class="container margin-top" align="center" >
-        <h2 class="text-info" style="font-family:宋体;font-weight:bold;font-size:49px">大鸡兄</h2>
-        <br>
-        <div class="text-muted">吃货.</div>
+        <h2  style="font-family:宋体;font-weight:bold;font-size:49px;color:#ffffff">逼格</h2>
         <br>
         <br>
         <div class="row">
-            <div class="col-xs-2">
-            </div>
-            <div class="col-xs-3" align="right">
-                <button class="btn btn-block btn-success" type="button" onclick="createRoom()">
-                    <span class="glyphicon glyphicon-pencil"></span> 创建新房间</button>
-            </div>
-            <div class="col-xs-2">
-            </div>
-            <div class="col-xs-3 " align="left">
+            <div class="col-xs-4"> </div>
+            <div class="col-xs-4 " align="left">
                 <div class="input-group">
-                    <input id="roomInput" type="text" maxlength="6" pattern="[0-9]{6}" class="form-control" placeholder="输入房号" width="200">
+                    <input id="roomInput" type="text" maxlength="6" class="form-control" placeholder="输入房号"
+                           width="200" data-toggle="tooltip" data-placement="top" title="6位有效数字">
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="button" onclick="enterRoom()">进入房间</button>
                     </span>
                 </div>
             </div>
+            <div class="col-xs-4"></div>
+        </div>
+        <div class="margin-gap" align="center">
+            <p><b><a onclick="createRoom()" target="_blank">创建新房间</a></b></p>
         </div>
     </div>
 </div>
+<nav class="navbar navbar-default navbar-fixed-bottom">
+    <div style="text-align:center;vertical-align:middle">
+        ihowe@outlook.com  2016
+    </div>
+</nav>
 </body>
 </html>
