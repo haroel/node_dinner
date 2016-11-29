@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head lang="zh">
+    <meta charset="UTF-8">
+    <title>大鸡兄</title>
+</head>
+<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<style>
+    body
+    {
+        background-color:#eee;
+    }
+    div.margin-top
+    {
+        margin-top:100px;
+    }
+</style>
+<script>
+    function createRoom()
+    {
+        alert("创建新房间");
+    }
+    function enterRoom()
+    {
+        var roomId = $("#roomInput")[0].value;
+        if (!roomId)
+        {
+            alert("请输入房号！");
+            return;
+        }
+        var reg = /^\d{6}$/;
+        if (!reg.test(roomId))
+        {
+            alert("只能输入数字！");
+            return;
+        }
+        alert("创建新房间" + roomId);
+    }
+</script>
+<body>
+<div>
+    <div class="container margin-top" align="center" >
+        <h2 class="text-info" style="font-family:宋体;font-weight:bold;font-size:49px">大鸡兄</h2>
+        <br>
+        <div class="text-muted">吃货.</div>
+        <br>
+        <br>
+        <div class="row">
+            <div class="col-xs-2">
+            </div>
+            <div class="col-xs-3" align="right">
+                <button class="btn btn-block btn-success" type="button" onclick="createRoom()">
+                    <span class="glyphicon glyphicon-pencil"></span> 创建新房间</button>
+            </div>
+            <div class="col-xs-2">
+            </div>
+            <div class="col-xs-3 " align="left">
+                <div class="input-group">
+                    <input id="roomInput" type="text" maxlength="6" pattern="[0-9]{6}" class="form-control" placeholder="输入房号" width="200">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" onclick="enterRoom()">进入房间</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>
