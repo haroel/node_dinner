@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <title>NO.{roomId}</title>
@@ -10,34 +10,23 @@
 <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <link href="zeroModal/zeroModal.css" rel="stylesheet">
 <script src="zeroModal/zeroModal.js"></script>
+<link href="common.css" rel="stylesheet">
 <script src="js/_$lib.js"></script>
 <style>
-    body
-    {
-        background-color:#eee;
-    }
-    div.margin-top
-    {
-        margin-top:70px;
-    }
-    div.margin-gap
-    {
-        margin-top:20px;
-    }
+
 </style>
 <script>
     $.get("_footer.html",function(data)
     {
         $("#foot").html(data);
     });
-
     $(function () { $("[data-toggle='tooltip']").tooltip(); });
     function createRoom()
     {
 
     }
 </script>
-<body>
+<body class="common">
     <div id="userInfo"></div>
     <div id="menuList"></div>
     <div id="foot"></div>

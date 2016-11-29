@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh">
 <head>
     <meta charset="UTF-8">
     <title>创建房号</title>
@@ -10,20 +10,10 @@
 <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <link href="zeroModal/zeroModal.css" rel="stylesheet">
 <script src="zeroModal/zeroModal.js"></script>
+<link href="common.css" rel="stylesheet">
 <script src="js/_$lib.js"></script>
 <style>
-    body
-    {
-        background-color:#eee;
-    }
-    div.margin-top
-    {
-        margin-top:70px;
-    }
-    div.margin-gap
-    {
-        margin-top:20px;
-    }
+
 </style>
 <script>
     $.get("_footer.html",function(data){
@@ -63,7 +53,7 @@
 
     }
 </script>
-<body>
+<body class="common">
 <div class="container margin-top">
     <div class="row">
         <div class="col-xs-4 " align="right" style="padding:10px;height:auto;" >
@@ -75,18 +65,18 @@
     </div>
     <div class="row margin-gap">
         <div class="col-xs-4 " align="right" style="padding:10px;height:auto;" >
-            订餐链接
-        </div>
-        <div class="col-xs-4" align="left">
-            <input id="dinnerUrlInput" type="text" class="form-control" data-toggle="tooltip" data-placement="top" title="饿了么餐厅链接">
-        </div>
-    </div>
-    <div class="row margin-gap">
-        <div class="col-xs-4 " align="right" style="padding:10px;height:auto;" >
             房间有效时间
         </div>
         <div class="col-xs-4" align="left">
             <input id="validTimeInput" type="text" class="form-control" data-toggle="tooltip" data-placement="top" value="180" title="以分钟为单位,超时将自动删除">
+        </div>
+    </div>
+    <div class="row margin-gap">
+        <div class="col-xs-4 " align="right" style="padding:10px;height:auto;" >
+            订餐链接
+        </div>
+        <div class="col-xs-4" align="left">
+            <input id="dinnerUrlInput" type="text" class="form-control" data-toggle="tooltip" data-placement="top" title="饿了么餐厅链接">
         </div>
     </div>
     <div class="row margin-gap">

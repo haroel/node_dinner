@@ -203,4 +203,5 @@ model.getRoom = function * (id)
 //        });
 //    return p;
 //};
+model.init();
 module.exports = model;

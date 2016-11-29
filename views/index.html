@@ -2,7 +2,7 @@
 <html>
 <head lang="zh">
     <meta charset="UTF-8">
-    <title>E</title>
+    <title>D</title>
 </head>
 <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
 <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
@@ -10,35 +10,18 @@
 <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <link href="zeroModal/zeroModal.css" rel="stylesheet">
 <script src="zeroModal/zeroModal.js"></script>
+<link href="common.css" rel="stylesheet">
 <script src="js/_$lib.js"></script>
 <style>
-    body
-    {
-        background-color:#eee;
-        background-image: url(img/bg.png);
-        background-repeat:no-repeat;
-        background-position:center;
-        -webkit-background-size:cover;
-        background-size:cover;
-    }
-    a{
+    a{color:#ddd;
         font-size: 14px;
     }
     a:link {color:#ddd;}      /* 未访问链接*/
-    a:visited {color:#00f100;}  /* 已访问链接 */
+    a:visited {color:#999999;}  /* 已访问链接 */
     a:hover {color:#ffffff;}  /* 鼠标移动到链接上 */
     a:active {color:#00ff00;}  /* 鼠标点击时 */
-    div.margin-top
-    {
-        margin-top:100px;
-    }
-    div.margin-gap
-    {
-        margin-top:20px;
-    }
 </style>
 <script>
-
     $(function () { $("[data-toggle='tooltip']").tooltip(); });
 
     function createRoom()
@@ -62,15 +45,14 @@
         successDialog("创建新房间" + roomId);
     }
 </script>
-<body>
+<body class="index">
 <div >
     <div class="container margin-top" align="center" >
-        <h2  style="font-family:宋体;font-weight:bold;font-size:49px;color:#ffffff">逼格</h2>
-        <br>
-        <br>
+        <h2 style="font-family:宋体;font-weight:bold;font-size:49px;color:#ffffff">逼格</h2>
+        <br> <br>
         <div class="row">
             <div class="col-xs-4"> </div>
-            <div class="col-xs-4 " align="left">
+            <div class="col-xs-4 ">
                 <div class="input-group">
                     <input id="roomInput" type="text" maxlength="6" class="form-control" placeholder="输入房号"
                            width="200" data-toggle="tooltip" data-placement="top" title="6位有效数字">
@@ -82,7 +64,7 @@
             <div class="col-xs-4"></div>
         </div>
         <div class="margin-gap" align="center">
-            <p><b><a onclick="createRoom()" target="_blank">创建新房间</a></b></p>
+            <b><a href="/dinner/create" target="_blank" data-toggle="tooltip" data-placement="bottom"  title="当前房间数量 {roomNum}">创建新房间</a></b>
         </div>
     </div>
 </div>
