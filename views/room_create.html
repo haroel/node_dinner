@@ -1,26 +1,13 @@
-<!DOCTYPE html>
-<html lang="zh">
-<head>
-    <meta charset="UTF-8">
-    <title>创建房号</title>
-</head>
-<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
-<link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
-<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
-<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
-<link href="zeroModal/zeroModal.css" rel="stylesheet">
-<script src="zeroModal/zeroModal.js"></script>
-<link href="common.css" rel="stylesheet">
-<script src="js/_$lib.js"></script>
+{_base.html}
 <style>
 
 </style>
 <script>
-    $.get("_footer.html",function(data){
-        $("#foot").html(data);
-    });
-
+    var isTipShow = false;
     $(function () { $("[data-toggle='tooltip']").tooltip(); });
+    $(function () { $('.popover-show').popover( {html : true ,trigger:"click"} );});
+
+
     function createRoom()
     {
         var roomId = $("#roomInput")[0].value;
@@ -75,8 +62,22 @@
         <div class="col-xs-4 " align="right" style="padding:10px;height:auto;" >
             订餐链接
         </div>
-        <div class="col-xs-4" align="left">
-            <input id="dinnerUrlInput" type="text" class="form-control" data-toggle="tooltip" data-placement="top" title="饿了么餐厅链接">
+        <div class="col-xs-6" align="left">
+            <div class="input-group">
+                <input id="dinnerUrlInput" type="text" class="form-control"
+                       width="200" data-toggle="tooltip" data-placement="top" title="饿了么餐厅链接">
+                    <span class="input-group-btn" id="linkbtns">
+                        <button class="btn btn-default popover-show" type="button"
+
+                                data-trigger="hover|click"
+                                data-container="#linkbtns"
+                                data-placement="top"
+                                data-title="参考下面链接"
+                                data-content="{links}" >
+                            <span class="glyphicon glyphicon-link"></span> </button>
+                        </button>
+                    </span>
+            </div>
         </div>
     </div>
     <div class="row margin-gap">
@@ -93,6 +94,6 @@
         </div>
     </div>
 </div>
-<div id="foot"/>
+{_footer.html}
 </body>
 </html>

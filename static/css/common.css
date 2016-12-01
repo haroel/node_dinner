@@ -1,7 +1,7 @@
 body.index
 {
     background-color:#eee;
-    background-image: url(img/bg.png);
+    background-image: url(../img/bg.png);
     background-repeat:no-repeat;
     background-position:center;
     -webkit-background-size:cover;
@@ -34,4 +34,9 @@ div.margin-gap
     border: 8px solid #ddd;
     vertical-align: top;
     text-align: center;
+}
+
+ul.outside
+{
+    list-style-position: outside
 }

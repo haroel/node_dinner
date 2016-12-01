@@ -1,24 +1,32 @@
 /**
  * Created by howe on 2016/11/26.
  */
-    const path = require("path");
+const path = require("path");
 const koa = require("koa");
 const Router = require('koa-router');
 
 const config = require('./__config.js');
 var handler = require("./handler.js");
 
-const koa_static = require("koa-static");
+var staticFiles = require("./util/static_files.js");
 
 let app = koa();
-let router = new Router({
-    prefix: '/dinner'
+let router = new Router();
+
+app.use( function *(next) {
+    var start = new Date().getTime(),
+        execTime;
+    yield next;
+    execTime = new Date().getTime() - start;
+    this.response.set('X-Response-Time', `${execTime}ms`);
+    console.log(`Process ${this.request.method} ${this.request.url} 处理时间${execTime}ms...`);
+
 });
 
-handler(router,app);
-app.use(router.routes());
-app.use(koa_static( path.join( __dirname,"views")));
+app.use(staticFiles('/static/', __dirname + '/static'));
 
+handler(router);
+app.use(router.routes());
 let server = app.listen(config.SERVER_PORT,config.SERVER_IP,  function (error)
 {
     if (error)
