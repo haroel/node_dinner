@@ -41,7 +41,6 @@ module.exports = function (router)
     // 进入房间
     router.get(`${PRE_FIX}/:id`,function *(next)
     {
-        console.log(this.params)
         let roomId = this.params.id;
         if (/^\d{6}$/.test(roomId))
         {

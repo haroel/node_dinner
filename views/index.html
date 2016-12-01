@@ -1,64 +1,79 @@
-{_base.html}
+
+<!DOCTYPE html>
+
+<html lang="en" class="no-js">
+
+<head>
+
+    <meta charset="UTF-8" />
+
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+
+    <title>Off-Canvas Menu Effects - Side Slide</title>
+
+
+
+    <link rel="stylesheet" type="text/css" href="css/normalize.css" />
+
+
+
+    <!--必要样式-->
+    <!--<link rel="stylesheet" type="text/css" href="fonts/font-awesome-4.2.0/css/font-awesome.min.css" />-->
+    <link rel="stylesheet" type="text/css" href="css/menu_sideslide.css" />
+    <link rel="stylesheet" type="text/css" href="css/common.css" />
+    <link href="http://cdn.bootcss.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+    <link rel="stylesheet" href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css">
+    <script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+    <script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+    <!--[if IE]>
+    <!--<script src="js/html5.js"></script>-->
+    <![endif]-->
+
+</head>
 <style>
-    a{color:#ddd;
-        font-size: 14px;
+    button:focus {
+        outline: none;
     }
+
+    a{color:#ddd; font-size: 14px;  }
     a:link {color:#ddd;}      /* 未访问链接*/
     a:visited {color:#999999;}  /* 已访问链接 */
     a:hover {color:#ffffff;}  /* 鼠标移动到链接上 */
     a:active {color:#00ff00;}  /* 鼠标点击时 */
-</style>
-<script>
-    $(function () { $("[data-toggle='tooltip']").tooltip(); });
 
-    function createRoom()
-    {
-        infoDialog("创建新房间");
-    }
-    function enterRoom()
-    {
-        var roomId = $("#roomInput")[0].value;
-        if (!roomId)
-        {
-            errorDialog("请输入有效房号！");
-            return;
-        }
-        var reg = /^\d{6}$/;
-        if (!reg.test(roomId))
-        {
-            errorDialog("只能输入数字！");
-            return;
-        }
-        successDialog("创建新房间" + roomId);
-    }
-</script>
-<body class="index">
-<div >
-    <div class="container margin-top" align="center" >
-        <h2 style="font-family:宋体;font-weight:bold;font-size:49px;color:#ffffff">逼格</h2>
-        <br> <br>
-        <div class="row">
-            <div class="col-xs-4"> </div>
-            <div class="col-xs-4 ">
-                <div class="input-group">
-                    <input id="roomInput" type="text" maxlength="6" class="form-control" placeholder="输入房号"
-                           width="200" data-toggle="tooltip" data-placement="top" title="6位有效数字">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" onclick="enterRoom()">进入房间</button>
-                    </span>
-                </div>
+
+</style>
+<body class="common dinner">
+
+<div class="menu-wrap" style="background-color: #000000;opacity: 0.88">
+    <button class="button button-large button-plain button-border button-box">按时打算打算 </button>
+    <button class="close-button" id="close-button">Close Menu</button>
+</div>
+<button class="menu-button" id="open-button">Open Menu</button>
+
+<div class="content-wrap container common" align="center" >
+    <h2 style="font-family:宋体;font-weight:bold;font-size:49px;color:#ffffff">标题</h2>
+    <br> <br>
+    <div class="row">
+        <div class="col-xs-4"> </div>
+        <div class="col-xs-4 ">
+            <div class="input-group">
+                <input id="roomInput" type="text" maxlength="6" class="form-control" placeholder="*"
+                       width="200" data-toggle="tooltip" data-placement="top" title="6位有效数字">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" onclick="enterRoom()">进入</button>
+                </span>
             </div>
-            <div class="col-xs-4"></div>
         </div>
-        <div class="margin-gap" align="center">
-            <b><a href="create" target="_blank" data-toggle="tooltip" data-placement="bottom"  title="当前房间数量 {roomNum}">创建新房间</a></b>
-        </div>
+        <div class="col-xs-4"></div>
+    </div>
+    <div class="margin-gap" align="center">
+        <b><a href="/dinner/create" target="_blank" data-toggle="tooltip" data-placement="bottom"  title="当前数量 {roomNum}">创建新房间</a></b>
     </div>
 </div>
-<nav class="navbar navbar-default navbar-fixed-bottom">
-    <div style="text-align:center;vertical-align:middle">
-        ihowe@outlook.com  2016
-    </div>
-</nav>
 </body>
+<script src="js/classie.js"></script>
+<script src="js/main.js"></script>
 </html>
