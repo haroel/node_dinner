@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="author" content="ihowe">
+    <title>{title}</title>
+</head>
+
+<!-- Icon库-->
+<link   href="http://cdn.bootcss.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<!-- bootstrap -->
+<link   href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" >
+<link   href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css" rel="stylesheet">
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<!--[if IE]>
+<!--<script src="js/html5.js"></script>-->
+<![endif]-->
+<style>
+    div.container div.row div {
+        margin:20px 0px;
+    }
+    div.center
+    {
+        text-align:center;
+    }
+    div.right
+    {
+        text-align:right;
+    }
+    .bottom
+    {
+        text-align:right;
+        bottom:0px;
+        color: #f0f0f0;
+    }
+</style>
+<body class="common">
+    <div id="left-menu" style="z-index: 1001;"></div>
+
+    <div class="container center">
+        <p>查找错误</p>
+
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-3 right">选择版本号:</div>
+            <div class="col-xs-4 ">
+                <select class="form-control" id="_comboBox">
+                    <option>正在连接</option>
+                </select>
+            </div>
+            <div class="col-xs-2 ">
+                <button class="btn btn-block btn-success" type="button" width="200" onclick="onClickSubmit()">
+                    <span class="glyphicon glyphicon-send"></span> 提交</button>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-3 right">错误日志:</div>
+            <div class="col-xs-7 ">
+                <textarea class="form-control" rows="5" id="_logInput"></textarea>
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        <div class="row">
+            <div class="col-xs-3 right">查找结果:</div>
+            <div class="col-xs-8" id="output">
+            </div>
+        </div>
+    </div>
+    <div id="foot" style="z-index: 1000;"></div>
+</body>
+
+<!-- 弹窗插件-->
+<script src="static/zeroModal/zeroModal.js"></script>
+<link   href="static/zeroModal/zeroModal.css" rel="stylesheet"/>
+
+<link   href="static/css/common.css" rel="stylesheet" type="text/css"  />
+<script src="static/js/_$lib.js"></script>
+</html>

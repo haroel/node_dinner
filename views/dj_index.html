@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="author" content="ihowe">
+    <title>{title}</title>
+</head>
+
+<!-- Icon库-->
+<link   href="http://cdn.bootcss.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<!-- bootstrap -->
+<link   href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" >
+<link   href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css" rel="stylesheet">
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<!--[if IE]>
+<!--<script src="js/html5.js"></script>-->
+<![endif]-->
+<!--必要样式-->
+<style>
+
+    a{color:#ddd; font-size: 14px;  }
+    a:link {color:#ddd;}      /* 未访问链接*/
+    a:visited {color:#999999;}  /* 已访问链接 */
+    a:hover {color:#ffffff;}  /* 鼠标移动到链接上 */
+    a:active {color:#00ff00;}  /* 鼠标点击时 */
+</style>
+<script>
+    function createRoom()
+    {
+        infoDialog("创建新房间");
+    }
+    function enterRoom()
+    {
+        var roomId = $("#roomInput")[0].value;
+        if (!roomId)
+        {
+            errorDialog("请输入有效房号！");
+            return;
+        }
+        var reg = /^\d{6}$/;
+        if (!reg.test(roomId))
+        {
+            errorDialog("只能输入数字！");
+            return;
+        }
+        successDialog("创建新房间" + roomId);
+    }
+</script>
+<body class="common dinner">
+    <div id="left-menu" style="z-index: 1001;"></div>
+    <br> <br> <br> <br>
+    <div class="content-wrap container common" align="center" >
+        <h2 style="font-family:宋体;font-weight:bold;font-size:49px;color:#ffffff">标题</h2>
+        <br> <br>
+        <div class="row">
+            <div class="col-xs-4"> </div>
+            <div class="col-xs-4 ">
+                <div class="input-group">
+                    <input id="roomInput" type="text" maxlength="6" class="form-control"
+                           width="200" data-toggle="tooltip" data-placement="top" title="6位有效数字">
+                    <span class="input-group-btn">
+                        <button class="btn btn-default" type="button" onclick="enterRoom()">进入房间</button>
+                    </span>
+                </div>
+            </div>
+        </div>
+        <div class="margin-gap" align="center">
+            <b><a href="dj_create.html" target="_blank"
+                  data-toggle="tooltip" data-placement="bottom"  title="当前数量 {num}">创建新房间</a></b>
+        </div>
+    </div>
+    <div id="foot" style="z-index: 1000;"> </div>
+</body>
+
+<!-- 弹窗插件-->
+<script src="static/zeroModal/zeroModal.js"></script>
+<link   href="static/zeroModal/zeroModal.css" rel="stylesheet"/>
+
+<link   href="static/css/common.css" rel="stylesheet" type="text/css"  />
+<script src="static/js/_$lib.js"></script>
+</html>

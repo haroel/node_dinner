@@ -42,3 +42,24 @@ function successDialog(str)
         height: '250px'
     });
 }
+
+
+function _viewHelperInit()
+{
+    $(function () { $("[data-toggle='tooltip']").tooltip(); });
+
+    var left_menu = document.getElementById( 'left-menu' );
+    var footer = document.getElementById( 'foot' );
+    if (left_menu)
+    {
+        $.get("_menu.html",function(data){
+            $(left_menu).html(data);
+        });
+    }
+    if (footer) {
+        $.get("_footer.html", function (data) {
+            $(footer).html(data);
+        });
+    }
+}
+_viewHelperInit();
