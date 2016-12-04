@@ -37,45 +37,101 @@
         color: #f0f0f0;
     }
 </style>
+<script>
+    window.onload=function()
+    {
+        $.ajax( "getVersionList", {dataType:"text"})
+                .done(function(data)
+                {
+                    var textStr ="";
+                    var list = JSON.parse(data);
+                    list.reverse();
+                    for(var i=0;i<list.length;i++)
+                    {
+                        textStr+= "<option>" + list[i] + "</option>"
+                    }
+                    $("#_comboBox")[0].innerHTML=textStr;
+                })
+                .fail(function(xhr, status)
+                {
+                    console.log("error"+status);
+                    $("#_comboBox")[0].innerHTML="<option>" + "连接失败" +"</option>";
+                }).always(function () {
+//                    ajaxLog('请求完成: 无论成功或失败都会调用');
+                });
+
+    };
+    function onClickSubmit()
+    {
+        // AJAX获取http数据
+        var _log = $("#_logInput")[0].value;
+        if (!_log)
+        {
+            errorDialog("请输入错误日志！");
+            return;
+        }
+        _log = btoa(_log);// Base64
+        showLoading();
+        var _version = $("#_comboBox").find("option:selected").text();
+        $.ajax( "getLog",
+        {
+            dataType:"text",
+            data:{
+                version :_version,
+                errorlog:_log
+            }
+
+        }).done (function(data)
+        {
+            $("#output").html( data );
+        }).fail(function(xhr, status)
+        {
+            $("#output").html( "处理失败 status:" + status );
+        }).always(function()
+        {
+            removeLoading();
+        })
+    }
+</script>
+
 <body class="common">
     <div id="left-menu" style="z-index: 1001;"></div>
-
-    <div class="container center">
-        <p>查找错误</p>
-
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-3 right">选择版本号:</div>
-            <div class="col-xs-4 ">
-                <select class="form-control" id="_comboBox">
-                    <option>正在连接</option>
-                </select>
+    <div class="content-wrap">
+        <div class="container">
+            <div style="text-align: center">
+                <h1>lua查错</h1>
             </div>
-            <div class="col-xs-2 ">
-                <button class="btn btn-block btn-success" type="button" width="200" onclick="onClickSubmit()">
-                    <span class="glyphicon glyphicon-send"></span> 提交</button>
+            <div class="row">
+                <div class="col-xs-3 right">选择版本号:</div>
+                <div class="col-xs-4 ">
+                    <select class="form-control" id="_comboBox">
+                        <option>正在连接</option>
+                    </select>
+                </div>
+                <div class="col-xs-2 ">
+                    <button class="btn btn-block btn-success" type="button" width="200" onclick="onClickSubmit()">
+                        <span class="glyphicon glyphicon-send"></span> 提交</button>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-3 right">错误日志:</div>
+                <div class="col-xs-7 ">
+                    <textarea class="form-control" rows="5" id="_logInput"></textarea>
+                </div>
+            </div>
+        </div>
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-3 right">查找结果:</div>
+                <div class="col-xs-8" id="output">
+                </div>
             </div>
         </div>
     </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-3 right">错误日志:</div>
-            <div class="col-xs-7 ">
-                <textarea class="form-control" rows="5" id="_logInput"></textarea>
-            </div>
-        </div>
-    </div>
-    <div class="container">
-        <div class="row">
-            <div class="col-xs-3 right">查找结果:</div>
-            <div class="col-xs-8" id="output">
-            </div>
-        </div>
-    </div>
-    <div id="foot" style="z-index: 1000;"></div>
+    <div id="foot" class="foot"></div>
 </body>
-
 <!-- 弹窗插件-->
 <script src="static/zeroModal/zeroModal.js"></script>
 <link   href="static/zeroModal/zeroModal.css" rel="stylesheet"/>

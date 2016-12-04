@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="author" content="ihowe">
-    <title>{title}</title>
+    <title>关于网站</title>
 </head>
 
 <!-- Icon库-->
@@ -21,21 +21,110 @@
 <style>
 
 </style>
-<script>
-
-</script>
-<body class="common">
+<style type="text/css">
+    /* Custom Styles */
+    ul.nav-tabs{
+        width: 140px;
+        margin-top: 20px;
+        border-radius: 4px;
+        border: 1px solid #ddd;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.067);
+    }
+    ul.nav-tabs li{
+        margin: 0;
+        border-top: 1px solid #ddd;
+    }
+    ul.nav-tabs li:first-child{
+        border-top: none;
+    }
+    ul.nav-tabs li a{
+        margin: 0;
+        padding: 8px 16px;
+        border-radius: 0;
+    }
+    ul.nav-tabs li.active a,
+    ul.nav-tabs li.active a:hover{
+        color: #fff;
+        background: #0088cc;
+        border: 1px solid #0088cc;
+    }
+    ul.nav-tabs li:first-child a{
+        border-radius: 4px 4px 0 0;
+    }
+    ul.nav-tabs li:last-child a{
+        border-radius: 0 0 4px 4px;
+    }
+    ul.nav-tabs.affix{
+        top: 30px; /* Set the top position of pinned element */
+    }
+</style>
+<body class="common" data-spy="scroll" data-target="#rightNavItems">
 <div id="left-menu" style="z-index: 1001;"></div>
-<br> <br> <br> <br>
-<div class="content-wrap container common" align="center" >
-    <h2 style="font-family:宋体;font-weight:bold;font-size:49px;">About</h2>
-    <br> <br>
 
+<div class="content-wrap container">
+    <div style="text-align: center">
+        <h1>Halo</h1>
+    </div>
+    <div class="row">
+        <div class="col-xs-2">
+        </div>
+        <div class="col-xs-8">
+            <h2 id="section-1">关于本站</h2>
+            <article class="post-content">
+                <p>
+                    本站页面基于 <a href="http://www.bootcss.com/" title="Bootstrap中文网">boostrap框架</a>
+                </p>
+                <p>
+                    后台服务器部分采用了Koa、phantomjs模块构建。
+                </p>
+                <p>本人在网站以及页面的开发工程中，借鉴了许多开源项目的现有成果，因此决定对本站所有源码开源，同时欢迎各位提出意见和建议。Github地址 <a href="https://github.com/haroel/node_dinner">https://github.com/haroel/node_dinner</a></p>
+                <br><br>
+            </article>
 
-
-
+            <h2 id="section-2">关于作者</h2>
+            <article class="post-content">
+                <p>我是何浩，一枚手游前端开发程序。<br>技术方向：Cocos2d-x/Cocos Creator、JS、C/C++、lua以及web开发方向。
+                    <br>目前主要自学Node.js以及bootstrap相关开发。</p>
+                <p>其他信息</p>
+                <ul>
+                    <li>毕业院校：武汉科技大学</li>
+                    <li>目前所在地：上海</li>
+                    <li>Email：ihowe@outlook.com</li>
+                    <li>技术博客：<a href="http://www.cnblogs.com/howeho/" title="将逐步迁移至Github">www.cnblogs.com/howeho</a></li>
+                    <li>微 博：</li>
+                </ul>
+                <p><a href="http://weibo.com/haroel">
+                    <img src="http://service.t.sina.com.cn/widget/qmd/1829592821/c6fd2b80/1.png" alt="img" title="新浪微博"></a></p>
+            </article>
+            <h2 id="section-3">感谢</h2>
+            <article class="post-content">
+                <p>感谢以下框架提供的帮助</p>
+                <p>
+                   jQuery插件库 <a href="http://www.jq22.com/yanshi652">http://www.jq22.com/yanshi652</a>
+                <p>
+                <p>
+                    zeroModal <a href="http://git.oschina.net/cylansad/zeroModal">http://git.oschina.net/cylansad/zeroModal</a>
+                <p>
+                <p>
+                    font-awesome <a href="http://fontawesome.dashgame.com/">http://fontawesome.dashgame.com/</a>
+                <p>
+                <p>
+                    感谢bootcss.com提供的boostrap代码的CDN服务
+                <p>
+            </article>
+        </div>
+        <div class="col-xs-2" id="rightNavItems">
+            <ul class="nav nav-tabs nav-stacked affix-top" data-spy="affix" data-offset-top="100">
+                <li class=""><a href="#section-1">关于本站</a></li>
+                <li class=""><a href="#section-2">关于作者</a></li>
+                <li class=""><a href="#section-3">感谢</a></li>
+            </ul>
+        </div>
+    </div>
 </div>
-<div id="foot" style="z-index: 1000;"></div>
+
+<br><br>
+<div id="foot" class="foot"></div>
 </body>
 <!-- 弹窗插件-->
 <script src="static/zeroModal/zeroModal.js"></script>

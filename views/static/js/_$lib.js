@@ -42,7 +42,15 @@ function successDialog(str)
         height: '250px'
     });
 }
+function showLoading()
+{
+    zeroModal.loading(6);
+}
 
+function removeLoading()
+{
+    zeroModal.closeAll();
+}
 
 function _viewHelperInit()
 {
@@ -54,11 +62,20 @@ function _viewHelperInit()
     {
         $.get("_menu.html",function(data){
             $(left_menu).html(data);
+            // menu初始化后回调函数
+            if (window.menuInitedCallback)
+            {
+                window.menuInitedCallback();
+            }
         });
     }
     if (footer) {
         $.get("_footer.html", function (data) {
             $(footer).html(data);
+            if (window.footerInitedCallback)
+            {
+                window.footerInitedCallback();
+            }
         });
     }
 }

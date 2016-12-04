@@ -21,11 +21,11 @@
 <!--必要样式-->
 <style>
 
-    a{color:#ddd; font-size: 14px;  }
-    a:link {color:#ddd;}      /* 未访问链接*/
-    a:visited {color:#999999;}  /* 已访问链接 */
-    a:hover {color:#ffffff;}  /* 鼠标移动到链接上 */
-    a:active {color:#00ff00;}  /* 鼠标点击时 */
+    .margin-gap a{color:#ddd; font-size: 14px;  }
+    .margin-gap a:link {color:#ddd;}      /* 未访问链接*/
+    .margin-gap a:visited {color:#999999;}  /* 已访问链接 */
+    .margin-gap a:hover {color:#ffffff;}  /* 鼠标移动到链接上 */
+    .margin-gap a:active {color:#00ff00;}  /* 鼠标点击时 */
 </style>
 <script>
     function createRoom()
@@ -51,30 +51,24 @@
 </script>
 <body class="common dinner">
     <div id="left-menu" style="z-index: 1001;"></div>
-    <br> <br> <br> <br>
     <div class="content-wrap container common" align="center" >
+        <br> <br> <br> <br>
         <h2 style="font-family:宋体;font-weight:bold;font-size:49px;color:#ffffff">标题</h2>
         <br> <br>
-        <div class="row">
-            <div class="col-xs-4"> </div>
-            <div class="col-xs-4 ">
-                <div class="input-group">
-                    <input id="roomInput" type="text" maxlength="6" class="form-control"
-                           width="200" data-toggle="tooltip" data-placement="top" title="6位有效数字">
+        <div class="input-group" style="width:300px;">
+            <input id="roomInput" type="text" maxlength="6" class="form-control"
+                   width="200" data-toggle="tooltip" data-placement="top" title="6位有效数字">
                     <span class="input-group-btn">
                         <button class="btn btn-default" type="button" onclick="enterRoom()">进入房间</button>
                     </span>
-                </div>
-            </div>
         </div>
         <div class="margin-gap" align="center">
             <b><a href="dj_create.html" target="_blank"
                   data-toggle="tooltip" data-placement="bottom"  title="当前数量 {num}">创建新房间</a></b>
         </div>
     </div>
-    <div id="foot" style="z-index: 1000;"> </div>
+    <div id="foot" class="foot"></div>
 </body>
-
 <!-- 弹窗插件-->
 <script src="static/zeroModal/zeroModal.js"></script>
 <link   href="static/zeroModal/zeroModal.css" rel="stylesheet"/>

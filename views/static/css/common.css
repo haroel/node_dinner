@@ -18,7 +18,11 @@ div.common
     height: 100%;
     overflow:hidden;
 }
-
+div.content-wrap
+{
+    overflow:hidden;
+    margin-bottom: 60px;
+}
 div.margin-top
 {
     margin-top:70px;
@@ -27,6 +31,26 @@ div.margin-gap
 {
     margin-top:30px;
 }
+/*装载footer的div*/
+div.foot
+{
+    z-index: 1000;
+}
+div.footLine
+{
+    border-top:1px solid #C0C0C0;
+    width: 80%;
+    margin:auto;
+}
+div.footer
+{
+    text-align:center;
+    vertical-align:middle;
+    background-color: #eeeeee;
+    z-index: 1000;
+    padding:15px auto 10px;
+}
+
 
 .div_grid {
     display: table;
@@ -54,3 +78,11 @@ ul.outside
 {
     list-style-position: outside
 }
+
+.post-content { margin-bottom: 30px; }
+.post-content h2 { font-size: 32px; }
+@media screen and (max-width: 800px) { .post-content h2 { font-size: 28px; } }
+.post-content h3 { font-size: 26px; }
+@media screen and (max-width: 800px) { .post-content h3 { font-size: 22px; } }
+.post-content h4 { font-size: 20px; }
+@media screen and (max-width: 800px) { .post-content h4 { font-size: 18px; } }
