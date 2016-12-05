@@ -13,6 +13,6 @@ page.open(url, function (s)
    {
     return document.body.innerHTML;
   });
-  console.log(content);
+  console.log("innerHTML",content);
   phantom.exit();
 });

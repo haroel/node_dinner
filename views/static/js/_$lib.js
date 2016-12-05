@@ -60,7 +60,7 @@ function _viewHelperInit()
     var footer = document.getElementById( 'foot' );
     if (left_menu)
     {
-        $.get("_menu.html",function(data){
+        $.get("static/html/_menu.html",function(data){
             $(left_menu).html(data);
             // menu初始化后回调函数
             if (window.menuInitedCallback)
@@ -70,7 +70,7 @@ function _viewHelperInit()
         });
     }
     if (footer) {
-        $.get("_footer.html", function (data) {
+        $.get("static/html/_footer.html", function (data) {
             $(footer).html(data);
             if (window.footerInitedCallback)
             {

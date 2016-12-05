@@ -6,7 +6,7 @@ const koa = require("koa");
 const Router = require('koa-router');
 
 const config = require('./__config.js');
-var handler = require("./handler.js");
+var controller = require("./controller.js");
 
 var staticFiles = require("./util/static_files.js");
 
@@ -23,10 +23,13 @@ app.use( function *(next) {
 
 });
 
-app.use(staticFiles('/static/', __dirname + '/static'));
+app.use( staticFiles( '/static/', path.join( __dirname,"views","static") ) );
 
-handler(router);
+controller.initControllers(router);
+
 app.use(router.routes());
+
+
 let server = app.listen(config.SERVER_PORT,config.SERVER_IP,  function (error)
 {
     if (error)

@@ -4,21 +4,13 @@
 const fsPromise = require("./../util/fsPromise.js");
 const easy_co = require("./../util/easy_co.js");
 const $lib = require("./../util/$lib.js");
+const ErrorCode = require("./ErrorCode.js");
 
 const path = require("path");
 
 const ROOMS = "rooms";
 const ROOM_STATIC_JSON = "room.json";
 const ROOM_USER_JSON = "users.json";
-
-const ERROR_NOT_FOUND_ROOM= `没有找到房间!`;
-const ERROR_MAX_ROOM_CREATED= `房间数已达最大，暂时不能创建！`;
-const ERROR_ROOM_TIME_INVALID= `房间已失效！`;
-
-const ERROR_DATA_ERROR= `本地数据出现错误`;
-const ERROR_USER_HAD_BOOK= `用户已在该房间预订过`;
-const ERROR_ROOM_HAD_EXIST= `该房间已存在，不可重复创建`;
-
 
 let model = {};
 
@@ -53,28 +45,50 @@ model.getRoomSize = function ()
 {
     return model.roomSets.size;
 };
+
+model.isRoomExist = function *(roomId) {
+
+    let roomDir = path.join(__dirname, ROOMS ,roomId);
+    let exist = yield fsPromise.exists(roomDir);
+    return exist;
+};
+
 model.createRoom = function* ( info )
 {
     let roomId = info.id;
     console.log("创建房间号",roomId);
     if (model.roomSets.has(roomId))
     {
-        return Promise.reject(ERROR_ROOM_HAD_EXIST);
+        return Promise.reject(ErrorCode.ERROR_ROOM_HAD_EXIST);
     }
+    console.log("2222")
     let roomDir = path.join(__dirname, ROOMS ,roomId);
     let exist = yield fsPromise.exists(roomDir);
     if (exist)
     {
         yield model.removeRoom(roomId);
-        return Promise.reject(ERROR_ROOM_HAD_EXIST);
+        return Promise.reject(ErrorCode.ERROR_ROOM_HAD_EXIST);
     }
     yield fsPromise.mkdir(roomDir);
+    console.log("333")
 
     let __url = info.url;
-    let pageObj = yield easy_co($lib.getEleList(__url));
+    let pageObj = {};
+    try
+    {
+        console.log("444",__url);
+        pageObj = yield easy_co($lib.getEleList(__url) );
+    }
+    catch(e)
+    {
+        return Promise.reject(e);
+    }
+    //let pageObj = yield easy_co($lib.getEleList(__url) );
+    console.log("555");
+
     pageObj.desc = info.desc || "*";
     pageObj.createTime = "" + parseInt(Date.now()/1000); // 秒
-    pageObj.validTime = info.validTime || ("" + 3 * 60 * 60); // 默认有效时间3小时
+    pageObj.validTime = parseInt(info.validTime) + ""; // 默认有效时间3小时
     //创建room.json
     let roomobj = pageObj;
     let roomJsonPath = path.join(roomDir,ROOM_STATIC_JSON);
@@ -93,15 +107,11 @@ model.createRoom = function* ( info )
 
 model.addUser = function * (id,userInfo) {
     let userobj = yield model.getUsers(id);
-    if (typeof userobj == "string")
-    {
-        return userobj;
-    }
     for (var uu of userobj)
     {
         if (uu.name === userInfo.name || uu.ip === userInfo.ip )
         {
-            return Promise.reject(ERROR_USER_HAD_BOOK);
+            return Promise.reject(ErrorCode.ERROR_USER_HAD_BOOK);
         }
     }
     // 新增用户订单
@@ -114,6 +124,7 @@ model.addUser = function * (id,userInfo) {
 
     let userJsonPath = path.join(__dirname, ROOMS ,id,ROOM_USER_JSON);
     yield fsPromise.writeFile(userJsonPath, JSON.stringify(userobj),"utf8");
+
 };
 
 model.getUsers = function * (id )
@@ -122,7 +133,7 @@ model.getUsers = function * (id )
     let exist = yield fsPromise.exists( userJsonPath );
     if (!exist)
     {
-        return Promise.reject(ERROR_NOT_FOUND_ROOM);
+        return Promise.reject(ErrorCode.ERROR_NOT_FOUND_ROOM);
     }
     let data = yield fsPromise.readFile( userJsonPath ,"utf8" );
     if (data)
@@ -131,7 +142,7 @@ model.getUsers = function * (id )
         if (userobj.endTime < Date.now())
         {
             yield model.removeRoom(id);
-            return Promise.reject(ERROR_ROOM_TIME_INVALID);
+            return Promise.reject(ErrorCode.ERROR_ROOM_TIME_INVALID);
         }
         return userobj;
     }
@@ -146,34 +157,36 @@ model.removeRoom = ( id ) =>
     //return fsPromise.removeFile(roomDir)
 };
 
-model.getRoom = function * (id)
+model.getRoom = function * (id,string_mode)
 {
     let roomJsonPath = path.join(__dirname, ROOMS ,id,ROOM_STATIC_JSON);
     let exist = yield fsPromise.exists( roomJsonPath );
     if(!exist)
     {
-        return Promise.reject(ERROR_NOT_FOUND_ROOM);
+        return Promise.reject(ErrorCode.ERROR_NOT_FOUND_ROOM);
     }
     let data = yield fsPromise.readFile( roomJsonPath ,"utf8" );
     if (data)
     {
         try{
             let obj= JSON.parse(data);
-            let _pTime = parseInt(obj.createTime) + parseInt(obj.validTime) * 1000;
+            let _pTime = (
+                parseInt(obj.createTime) + parseInt(obj.validTime) )* 1000;
             if ( _pTime < Date.now())
             {
                 yield model.removeRoom(id);
-                return Promise.reject(ERROR_ROOM_TIME_INVALID);
+                return Promise.reject(ErrorCode.ERROR_ROOM_TIME_INVALID);
             }
+            obj.leftTime = (_pTime - Date.now())/1000;
             return obj;
         }
         catch(e)
         {
             console.log(e);
-            Promise.reject(ERROR_DATA_ERROR);
+            Promise.reject(ErrorCode.ERROR_DATA_ERROR);
         }
     }
-    return Promise.reject(ERROR_DATA_ERROR);
+    return Promise.reject(ErrorCode.ERROR_DATA_ERROR);
 };
 //
 //model.getRoom11 = (id)=>

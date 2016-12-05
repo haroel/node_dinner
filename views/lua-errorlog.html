@@ -5,7 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="author" content="ihowe">
-    <title>{title}</title>
+    <title>lua查错</title>
 </head>
 
 <!-- Icon库-->
@@ -40,25 +40,25 @@
 <script>
     window.onload=function()
     {
-        $.ajax( "getVersionList", {dataType:"text"})
-                .done(function(data)
+        $.ajax( "lua/getVersionList", {dataType:"text"})
+            .done(function(data)
+            {
+                var textStr ="";
+                var list = JSON.parse(data);
+                list.reverse();
+                for(var i=0;i<list.length;i++)
                 {
-                    var textStr ="";
-                    var list = JSON.parse(data);
-                    list.reverse();
-                    for(var i=0;i<list.length;i++)
-                    {
-                        textStr+= "<option>" + list[i] + "</option>"
-                    }
-                    $("#_comboBox")[0].innerHTML=textStr;
-                })
-                .fail(function(xhr, status)
-                {
-                    console.log("error"+status);
-                    $("#_comboBox")[0].innerHTML="<option>" + "连接失败" +"</option>";
-                }).always(function () {
-//                    ajaxLog('请求完成: 无论成功或失败都会调用');
-                });
+                    textStr+= "<option>" + list[i] + "</option>"
+                }
+                $("#_comboBox")[0].innerHTML=textStr;
+            })
+            .fail(function(xhr, status)
+            {
+                console.log("error"+status);
+                $("#_comboBox")[0].innerHTML="<option>" + "连接失败" +"</option>";
+            }).always(function () {
+
+            });
 
     };
     function onClickSubmit()
@@ -73,7 +73,7 @@
         _log = btoa(_log);// Base64
         showLoading();
         var _version = $("#_comboBox").find("option:selected").text();
-        $.ajax( "getLog",
+        $.ajax( "lua/getLog",
         {
             dataType:"text",
             data:{
@@ -86,7 +86,7 @@
             $("#output").html( data );
         }).fail(function(xhr, status)
         {
-            $("#output").html( "处理失败 status:" + status );
+            $("#output").html( "处理失败 status:" + xhr.responseText );
         }).always(function()
         {
             removeLoading();
@@ -109,7 +109,7 @@
                     </select>
                 </div>
                 <div class="col-xs-2 ">
-                    <button class="btn btn-block btn-success" type="button" width="200" onclick="onClickSubmit()">
+                    <button class="btn btn-success" type="button" width="300" onclick="onClickSubmit()">
                         <span class="glyphicon glyphicon-send"></span> 提交</button>
                 </div>
             </div>

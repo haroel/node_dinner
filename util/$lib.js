@@ -46,7 +46,7 @@ let getHtml = function (url) {
                 path.join(__dirname,"bin","phantomjs_get.js"),
                 url
             ];
-            let free = spawn('phantomjs', params);
+            let free = spawn( path.join(__dirname,"bin",'phantomjs'), params);
             // 捕获标准输出并将其打印到控制台
             free.stdout.on('data', function (data) {
                 htmlData += "" + data;
@@ -91,7 +91,7 @@ let getEleList = function * (_url)
 
     }catch(e)
     {
-        console.log(e);
+        return Promise.reject(e);
     }
     try
     {
@@ -114,10 +114,10 @@ let getEleList = function * (_url)
             arr.push(obj);
         });
         result.list = arr;
-        //console.log("菜单总长度",arr.length);
+        console.log("菜单总长度",arr.length);
     }catch(e)
     {
-        console.log(e);
+        return Promise.reject(e);
     }
     return result;
 };

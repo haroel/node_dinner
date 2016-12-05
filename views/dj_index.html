@@ -20,7 +20,6 @@
 <![endif]-->
 <!--必要样式-->
 <style>
-
     .margin-gap a{color:#ddd; font-size: 14px;  }
     .margin-gap a:link {color:#ddd;}      /* 未访问链接*/
     .margin-gap a:visited {color:#999999;}  /* 已访问链接 */
@@ -46,7 +45,23 @@
             errorDialog("只能输入数字！");
             return;
         }
-        successDialog("创建新房间" + roomId);
+        showLoading();
+        $.ajax( "dj/check_room",
+        {
+            dataType:"text",
+            data:{id :roomId}
+
+        }).done (function(data)
+        {
+            removeLoading();
+            window.open("dj_room.html?id=" + roomId);
+        }).fail(function(xhr, status)
+        {
+            removeLoading();
+            errorDialog( xhr.responseText );
+        }).always(function()
+        {
+        })
     }
 </script>
 <body class="common dinner">
@@ -58,9 +73,9 @@
         <div class="input-group" style="width:300px;">
             <input id="roomInput" type="text" maxlength="6" class="form-control"
                    width="200" data-toggle="tooltip" data-placement="top" title="6位有效数字">
-                    <span class="input-group-btn">
-                        <button class="btn btn-default" type="button" onclick="enterRoom()">进入房间</button>
-                    </span>
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" onclick="enterRoom()">进入房间</button>
+                </span>
         </div>
         <div class="margin-gap" align="center">
             <b><a href="dj_create.html" target="_blank"

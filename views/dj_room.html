@@ -27,6 +27,7 @@
         overflow:hidden;
         min-width: 400px;
     }
+
 </style>
 <script>
     $(function () {
@@ -38,12 +39,59 @@
         // 重新设置menu按钮位置
         $("#open-button").css("margin-top","35px");
     }
-
-    function createRoom()
+    window.onload=function()
     {
+        var roomId = document.title.replace(/[^\d]*/,"");
+        showLoading();
+        $.ajax( "dj/get_room",
+                {
+                    dataType:"text",
+                    data:{id :roomId}
 
+                }).done (function(data)
+        {
+            removeLoading();
+
+            var _o = JSOn.parse(atob(data));
+            if (_o)
+            {
+                $("#shopLink").attr("href",_o.link);
+                $("#shopLink").html( _o.title );
+                var leftTime = parseInt(_o.leftTime);
+                if (leftTime > 0)
+                {
+                    var _p = setInterval(function()
+                    {
+                        if (leftTime === 0)
+                        {
+                            clearInterval(_p);
+                        }
+                        $("#leftTime").html( leftTime + "秒");
+                        leftTime--;
+                    },1000);
+                }
+                var itemTemplate = $("#menuListDiv").html();
+                var contens = "";
+                var len = _o.list.length;
+                for (var i= 0;i < len;++i)
+                {
+                    var obj = _o.list[i];
+                    var items = itemTemplate;
+                    items = items.replace( "{img}",obj.img );
+                    items = items.replace( "{name}",obj.name );
+                    items = items.replace( "{price}",obj.price );
+                    contens+=items;
+                }
+                $("#menuListDiv").html(contens);
+
+            }
+        }).fail(function(xhr, status)
+                {
+                    removeLoading();
+                    errorDialog( xhr.responseText );
+                }).always(function()
+                {})
     }
-
 </script>
 <body class="common">
     <div id="left-menu" style="z-index: 1002;"></div>
@@ -52,11 +100,11 @@
             <div class="row">
                 <div class="col-xs-5" style="text-align: center">
                     <h1>NO.{roomId}</h1>
-                    <h3><p><a href="{link}">{shopName}</a></p></h3>
+                    <h3><p><a id="shopLink" href="" ></a></p></h3>
                 </div>
                 <div class="col-xs-2"></div>
                 <div class="col-xs-5" id="output">
-                    <h5 style="margin-top: 20px"> 剩余时间：<span>{leftTime}</span></h5>
+                    <h5 style="margin-top: 20px"> 剩余时间：<span id="leftTime"></span></h5>
                     <p> 你选择的订单是：<span>{my}</span></p>
                     <button class="btn btn-success" type="button" width="200" onclick="onClickSubmit()">
                         <span class="glyphicon glyphicon-send"></span>当前订单</button>
@@ -65,11 +113,11 @@
         </div>
     </nav>
     <div class="content-wrap container" style="padding-top: 150px;padding-bottom: 30px">
-        <div class="row" style="margin-bottom: 20px">
-            {menuList}
-            <div class="col-sm-6 col-md-3 col-lg-2">
+        <div class="row" style="margin-bottom: 20px" id="menuListDiv">
+
+            <div class="col-sm-6 col-md-3 col-lg-2" >
                 <div class="thumbnail" style="text-align: center">
-                    <img src="https://fuss10.elemecdn.com/d/42/45e74da11af1b8193655747023be2jpeg.jpeg?imageMogr2/thumbnail/200x200/format/webp/quality/85"
+                    <img src="{img}"
                          width="100px"
                          height="100px"
                          alt="{name}">

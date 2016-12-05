@@ -44,7 +44,7 @@ let initWithHtml = ()=>
 };
 
 initWithHtml();
-console.log("html模板",htmlContenHash);
+console.log("process html templates :",htmlContenHash.keys());
 
 let getTemplateView = (htmlFileName)=>
 {
@@ -53,7 +53,7 @@ let getTemplateView = (htmlFileName)=>
     {
         return content;
     }
-    return "404"
+    return htmlContenHash.get("404.html");
 };
 
 module.exports = getTemplateView;
