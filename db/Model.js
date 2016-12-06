@@ -56,12 +56,15 @@ model.isRoomExist = function *(roomId) {
 model.createRoom = function* ( info )
 {
     let roomId = info.id;
+    let __url = info.url;
+    let desc = info.desc || "*";
+    let validTime = parseInt(info.validTime); // 单位秒
+
     console.log("创建房间号",roomId);
     if (model.roomSets.has(roomId))
     {
         return Promise.reject(ErrorCode.ERROR_ROOM_HAD_EXIST);
     }
-    console.log("2222")
     let roomDir = path.join(__dirname, ROOMS ,roomId);
     let exist = yield fsPromise.exists(roomDir);
     if (exist)
@@ -70,34 +73,28 @@ model.createRoom = function* ( info )
         return Promise.reject(ErrorCode.ERROR_ROOM_HAD_EXIST);
     }
     yield fsPromise.mkdir(roomDir);
-    console.log("333")
 
-    let __url = info.url;
     let pageObj = {};
     try
     {
-        console.log("444",__url);
         pageObj = yield easy_co($lib.getEleList(__url) );
     }
     catch(e)
     {
         return Promise.reject(e);
     }
-    //let pageObj = yield easy_co($lib.getEleList(__url) );
-    console.log("555");
+    pageObj.desc = desc;
+    pageObj.createTime = "" + Date.now();             // 豪秒
+    pageObj.endTime = "" + (Date.now() + validTime); // 结束时间
 
-    pageObj.desc = info.desc || "*";
-    pageObj.createTime = "" + parseInt(Date.now()/1000); // 秒
-    pageObj.validTime = parseInt(info.validTime) + ""; // 默认有效时间3小时
     //创建room.json
     let roomobj = pageObj;
     let roomJsonPath = path.join(roomDir,ROOM_STATIC_JSON);
     yield fsPromise.writeFile(roomJsonPath, JSON.stringify(roomobj),"utf8");
 
-    let _pTime = parseInt(pageObj.createTime) + parseInt(pageObj.validTime) * 1000;
     let userobj = {
         list:[],
-        endTime:_pTime
+        endTime:pageObj.endTime
     };
     let userJsonPath = path.join(roomDir,ROOM_USER_JSON);
     yield fsPromise.writeFile(userJsonPath, JSON.stringify(userobj),"utf8");
@@ -139,7 +136,7 @@ model.getUsers = function * (id )
     if (data)
     {
         let userobj= JSON.parse(data);
-        if (userobj.endTime < Date.now())
+        if ( parseInt( userobj.endTime ) <= Date.now())
         {
             yield model.removeRoom(id);
             return Promise.reject(ErrorCode.ERROR_ROOM_TIME_INVALID);
@@ -170,14 +167,13 @@ model.getRoom = function * (id,string_mode)
     {
         try{
             let obj= JSON.parse(data);
-            let _pTime = (
-                parseInt(obj.createTime) + parseInt(obj.validTime) )* 1000;
-            if ( _pTime < Date.now())
+            let _pTime = parseInt(obj.endTime);
+            if ( _pTime <= Date.now())
             {
                 yield model.removeRoom(id);
                 return Promise.reject(ErrorCode.ERROR_ROOM_TIME_INVALID);
             }
-            obj.leftTime = (_pTime - Date.now())/1000;
+            obj.leftTime = _pTime - Date.now();
             return obj;
         }
         catch(e)

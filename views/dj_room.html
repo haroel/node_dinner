@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=gbk" />
     <meta name="author" content="ihowe">
     <title>{title}</title>
 </head>
@@ -17,6 +18,7 @@
 <!--[if IE]>
 <!--<script src="js/html5.js"></script>-->
 <![endif]-->
+<link href="static/css/menu_sideslide.css" rel="stylesheet" type="text/css"  />
 
 <style>
     .left{
@@ -52,12 +54,12 @@
         {
             removeLoading();
 
-            var _o = JSOn.parse(atob(data));
+            var _o = JSON.parse(atob(data));
             if (_o)
             {
                 $("#shopLink").attr("href",_o.link);
                 $("#shopLink").html( _o.title );
-                var leftTime = parseInt(_o.leftTime);
+                var leftTime = Math.floor( parseInt(_o.leftTime)/1000 );
                 if (leftTime > 0)
                 {
                     var _p = setInterval(function()
@@ -78,6 +80,7 @@
                     var obj = _o.list[i];
                     var items = itemTemplate;
                     items = items.replace( "{img}",obj.img );
+                    items = items.replace( "{name}",obj.name );
                     items = items.replace( "{name}",obj.name );
                     items = items.replace( "{price}",obj.price );
                     contens+=items;
@@ -115,7 +118,7 @@
     <div class="content-wrap container" style="padding-top: 150px;padding-bottom: 30px">
         <div class="row" style="margin-bottom: 20px" id="menuListDiv">
 
-            <div class="col-sm-6 col-md-3 col-lg-2" >
+            <div class="col-sm-6 col-md-3 col-lg-2" style="height: 400px">
                 <div class="thumbnail" style="text-align: center">
                     <img src="{img}"
                          width="100px"

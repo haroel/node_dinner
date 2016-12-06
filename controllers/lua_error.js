@@ -79,8 +79,15 @@ handlers["GET /lua/getVersionList"] = function *(next)
     let req = this.request;
 
     console.log("client Ip %s",req.ip);
-    let list = findError.getVersionList();
-    this.body = JSON.stringify(list);
+    try
+    {
+        let list = yield findError.getVersionList();
+        this.body = JSON.stringify(list);
+    }catch (e)
+    {
+        this.status = 500;
+        this.body = e.toString();
+    }
 };
 
 handlers["GET /lua/errorlog"] = handlers["GET /lua-errorlog.html"];

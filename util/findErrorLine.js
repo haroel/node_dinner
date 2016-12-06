@@ -4,6 +4,7 @@ var trace = console.log;
 var fs = require("fs");
 var os = require("os");
 var path = require("path");
+var fsPromise = require("./fsPromise.js");
 
 let main_dir_path = "F:\\RSLG_branche/";
 let _os = os.type();
@@ -235,10 +236,10 @@ module.exports.search2 = function ( version, params  )
     return new Promise(handler)
 };
 
-module.exports.getVersionList = function ()
+module.exports.getVersionList = function * ()
 {
     let result = [];
-    let files = fs.readdirSync(main_dir_path);
+    let files = yield fsPromise.readdir(main_dir_path);
     for (let filename of files)
     {
         if (isIgnore(filename) == false)

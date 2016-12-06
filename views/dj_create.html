@@ -17,6 +17,8 @@
 <!--[if IE]>
 <!--<script src="js/html5.js"></script>-->
 <![endif]-->
+<link href="static/css/menu_sideslide.css" rel="stylesheet" type="text/css"  />
+
 <!--必要样式-->
 <script>
 
@@ -49,7 +51,7 @@
         params.id = roomId;
         params.url = dinnerUrlInput;
         params.desc = logInput || "无";
-        params.validTime = (parseInt(validTimeInput) * 60 + "");
+        params.validTime = (parseInt(validTimeInput) * 60 * 1000 + "");
 
         let roomInfo = btoa(JSON.stringify(params)); // 转base64
         showLoading();
@@ -63,8 +65,8 @@
         {
             console.log(data);
             removeLoading();
-            alert(data);
-            window.open("dj_room.html?id=" + roomId);
+//            alert(data);
+            window.location.href="dj_room.html?id=" + roomId
         }).fail(function(xhr, status)
         {
             removeLoading();
