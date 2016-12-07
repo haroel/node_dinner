@@ -12,6 +12,7 @@ const ROOMS = "rooms";
 const ROOM_STATIC_JSON = "room.json";
 const ROOM_USER_JSON = "users.json";
 
+const CD_Time  = 10 * 60 * 1000; // 每个账号只能10分钟改一次
 let model = {};
 
 model.roomSets = new Set();
@@ -104,20 +105,34 @@ model.createRoom = function* ( info )
 
 model.addUser = function * (id,userInfo) {
     let userobj = yield model.getUsers(id);
+
+    let obj = null;
     for (var uu of userobj)
     {
-        if (uu.name === userInfo.name || uu.ip === userInfo.ip )
+        /**同一个人名十分钟只能提交一次**/
+        if ( uu.name === userInfo.name )
         {
-            return Promise.reject(ErrorCode.ERROR_USER_HAD_BOOK);
+            let delayTime = Date.now() - parseInt( uu.lastDate );
+            let __dd = (CD_Time - delayTime)/1000;
+            if (__dd > 3)
+            {
+                return Promise.reject(ErrorCode.ERROR_USER_HAD_BOOK + `,请在${__dd}秒后重试` );
+            }
+            obj = uu;
+            break;
         }
     }
     // 新增用户订单
-    let obj = {};
+    if (!obj)
+    {
+        obj = {};
+        userobj.list.push(obj);
+    }
     obj.name = userInfo.name;
     obj.ip = userInfo.ip;
     obj.dinnerId = userInfo.dinnerId;
     obj.desc = userInfo.desc;
-    userobj.list.push(obj);
+    obj.lastDate = Date.now();
 
     let userJsonPath = path.join(__dirname, ROOMS ,id,ROOM_USER_JSON);
     yield fsPromise.writeFile(userJsonPath, JSON.stringify(userobj),"utf8");

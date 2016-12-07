@@ -17,35 +17,6 @@ handlers["GET /dj_index.html"] = function *(next)
     this.body = content.replace("{num}",model.getRoomSize());
 };
 
-handlers["GET /dj_room.html"] = function*(next)
-{
-    console.log('handlers["GET /dj_room.html"]');
-    let req = this.request;
-    let roomId = req.query["id"];
-    if (roomId && /^\d{6}$/.test(roomId))
-    {
-        try {
-            let exist = yield model.isRoomExist(roomId);
-            if (exist)
-            {
-                let _o = yield model.getRoom(roomId);
-                let content = viewtemplate("dj_room.html");
-                content = content.replace("{title}","NO." + roomId);
-                content = content.replace("{roomId}",roomId);
-                this.body = content;
-            }else
-            {
-                this.body = viewtemplate("error.html").replace("{error}",ErrorCode.ERROR_NOT_FOUND_ROOM);
-            }
-        }catch (error)
-        {
-            this.body = viewtemplate("error.html").replace("{error}",error);
-        }
-    }else
-    {
-        this.body = viewtemplate("error.html").replace("{error}", ErrorCode.ERROR_ROOMID_FORMAT_ERROR);
-    }
-};
 
 handlers["GET /dj_create.html"] = function *(next)
 {
@@ -98,6 +69,34 @@ handlers["GET /dj/create"] = function*(next)
         this.body = ErrorCode.ERROR_ROOMID_FORMAT_ERROR;
     }
 };
+
+handlers["GET /dj_room.html"] = function*(next)
+{
+    let req = this.request;
+    let roomId = req.query["id"];
+    if (roomId && /^\d{6}$/.test(roomId))
+    {
+        try {
+            let exist = yield model.isRoomExist(roomId);
+            if (exist)
+            {
+                let content = viewtemplate("dj_room.html");
+                content = content.replace("{title}","NO." + roomId);
+                content = content.replace("{roomId}",roomId);
+                this.body = content;
+            }else
+            {
+                this.body = viewtemplate("error.html").replace("{error}",ErrorCode.ERROR_NOT_FOUND_ROOM);
+            }
+        }catch (error)
+        {
+            this.body = viewtemplate("error.html").replace("{error}",error);
+        }
+    }else
+    {
+        this.body = viewtemplate("error.html").replace("{error}", ErrorCode.ERROR_ROOMID_FORMAT_ERROR);
+    }
+};
 /** 获取房间信息 **/
 handlers["GET /dj/get_room"] = function*(next)
 {
@@ -107,11 +106,8 @@ handlers["GET /dj/get_room"] = function*(next)
     {
         try {
             let roomObj = yield model.getRoom(roomId);
-            //let userObj = yield model.getUsers(roomId);
-            console.log("get_room",roomObj);
             this.status = 200;
             this.body = (new Buffer( JSON.stringify( roomObj ) ).toString('base64'));
-
         }catch (error)
         {
             this.status = 405;
@@ -153,11 +149,12 @@ handlers["GET /dj/addUser"] = function*(next)
     let req = this.request;
     let roomId = req.query["id"];
     let _data = req.query["userInfo"];
-
+    let ip = req.query["ip"];
     // base64解码
     let userInfoStr = new Buffer(_data, 'base64').toString();
     try {
         let userObj = JSON.parse(userInfoStr);
+        userObj.ip = ip;
         yield model.addUser(roomId, userObj);
 
     }catch (error)

@@ -29,12 +29,47 @@
         overflow:hidden;
         min-width: 400px;
     }
+    .menuList
+    {
+        padding-top: 150px;
+        padding-bottom: 30px
+    }
+    .selectBtn
+    {
 
+    }
 </style>
 <script>
+    var menuListData = {};
+    var selectItem = null;
+
     $(function () {
         $("[data-toggle='tooltip']").tooltip();
     });
+
+    function countTimeStr(leftTime )
+    {
+        leftTime = Math.floor(leftTime);
+        var seconds = leftTime%60;
+        var minutes = Math.floor( leftTime/60 );
+        if (minutes < 1)
+        {
+            return seconds + "秒";
+        }
+        var hours = Math.floor( minutes/60 );
+        minutes = minutes%60;
+        if (hours < 1)
+        {
+            return minutes + "分" + seconds + "秒";
+        }
+        var days = Math.floor( hours/24 );
+        hours = hours%24;
+        if (days < 1)
+        {
+            return hours + "小时" + minutes + "分" + seconds + "秒";
+        }
+        return days + "天" + hours + "小时" + minutes + "分" + seconds + "秒";
+    }
 
     function menuInitedCallback()
     {
@@ -54,22 +89,30 @@
         {
             removeLoading();
 
-            var _o = JSON.parse(atob(data));
+            var _o = JSON.parse(Base64.decode(data));
             if (_o)
             {
+                menuListData = _o;
                 $("#shopLink").attr("href",_o.link);
                 $("#shopLink").html( _o.title );
                 var leftTime = Math.floor( parseInt(_o.leftTime)/1000 );
                 if (leftTime > 0)
                 {
+                    $("#leftTime").html( "剩余时间  " + countTimeStr(leftTime));
                     var _p = setInterval(function()
                     {
                         if (leftTime === 0)
                         {
                             clearInterval(_p);
+                            $("#leftTime").html( "该房间已失效!" );
+                            $(".selectBtn").each(function () {
+                                        $(this).attr('disabled',"true");
+                                    }
+                            );
+                            return;
                         }
-                        $("#leftTime").html( leftTime + "秒");
-                        leftTime--;
+                        --leftTime;
+                        $("#leftTime").html( "剩余时间  " + countTimeStr(leftTime) );
                     },1000);
                 }
                 var itemTemplate = $("#menuListDiv").html();
@@ -83,60 +126,122 @@
                     items = items.replace( "{name}",obj.name );
                     items = items.replace( "{name}",obj.name );
                     items = items.replace( "{price}",obj.price );
+                    items = items.replace( "{menuId}",obj.id );
                     contens+=items;
                 }
                 $("#menuListDiv").html(contens);
-
+                $(".col-sm-6").css("visibility","visible");
             }
         }).fail(function(xhr, status)
                 {
                     removeLoading();
-                    errorDialog( xhr.responseText );
+                    infoDialog( xhr.responseText );
                 }).always(function()
                 {})
+    };
+
+    function openModal(btn)
+    {
+        var mId = $(btn).attr("id");
+        console.log("选择的订单id" + mId);
+        var len = menuListData.list.length;
+        for (var i= 0;i < len;++i)
+        {
+            var obj = menuListData.list[i];
+            if (obj.id === mId)
+            {
+                selectItem = obj;
+                $("#modelMenuName").html(obj.name );
+                $('#submitModal').modal('show');
+                break;
+            }
+        }
+    }
+    function submit()
+    {
+        infoDialog( "提交" );
     }
 </script>
 <body class="common">
-    <div id="left-menu" style="z-index: 1002;"></div>
-    <nav class="navbar navbar-default navbar-fixed-top" role="navigation" style="z-index: 1000;height: 120px;;">
+    <div id="left-menu" class="topzindex"></div>
+    <nav class="navbar navbar-default navbar-fixed-top navbarzindex" role="navigation" style="height: 120px;">
         <div class="container">
             <div class="row">
-                <div class="col-xs-5" style="text-align: center">
-                    <h1>NO.{roomId}</h1>
-                    <h3><p><a id="shopLink" href="" ></a></p></h3>
+                <div class="col-xs-8" style="text-align: left;padding-left: 60px;vertical-align: middle">
+                    <h3>NO.{roomId}   <a id="shopLink" href="" >{shopName}</a></h3>
                 </div>
-                <div class="col-xs-2"></div>
-                <div class="col-xs-5" id="output">
-                    <h5 style="margin-top: 20px"> 剩余时间：<span id="leftTime"></span></h5>
+                <div class="col-xs-4" style="text-align: right;vertical-align: middle">
+                    <h4 style="margin-top: 20px" id="leftTime">leftTime</h4>
+                </div>
+            </div>
+            <div class="row" style="padding-top: 20px">
+                <div class="col-xs-6" style="text-align: left;padding-left: 60px;vertical-align: middle;height: 100%;visibility: hidden">
                     <p> 你选择的订单是：<span>{my}</span></p>
-                    <button class="btn btn-success" type="button" width="200" onclick="onClickSubmit()">
-                        <span class="glyphicon glyphicon-send"></span>当前订单</button>
+                </div>
+                <div class="col-xs-6" style="text-align: right;">
+                    <button class="btn btn-success" type="button" width="200"
+                            onclick="onClickSubmit()">
+                        <span class="glyphicon glyphicon-send"></span> 当前订单</button>
                 </div>
             </div>
         </div>
     </nav>
-    <div class="content-wrap container" style="padding-top: 150px;padding-bottom: 30px">
+    <div class="content-wrap container menuList">
         <div class="row" style="margin-bottom: 20px" id="menuListDiv">
 
-            <div class="col-sm-6 col-md-3 col-lg-2" style="height: 400px">
-                <div class="thumbnail" style="text-align: center">
+            <div class="col-sm-6 col-md-3 col-lg-2" style="height: 300px;visibility: hidden">
+                <div class="itemHover" style="text-align: center;height: 280px">
                     <img src="{img}"
                          width="100px"
                          height="100px"
                          alt="{name}">
-                    <div class="caption">
-                        <h3>{name}</h3>
-                        <p>价格{price}￥</p>
-                        <p><a href="#" class="btn btn-primary" role="button">选择</a>
-                            <a href="#" class="btn btn-default" role="button">取消</a></p>
+                    <h3 style="height: 60px;font-size: 1.25em">{name}</h3>
+                    <div >
+                        <p>￥{price}</p>
+                        <button class="btn btn-success selectBtn" id="{menuId}" width="300" onclick="openModal(this)">
+                            选择</button>
                     </div>
                 </div>
             </div>
 
-
         </div>
     </div>
-    <div id="foot" class="foot"></div>
+    <div id="foot" class="highzindex"></div>
+    <div class="modal fade" id="submitModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button">
+                        <span aria-hidden="true">×</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h3 class="modal-title">你选择了<span id="modelMenuName" style="color: #ff0000">{name} </span></h3>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-xs-2" style="text-align: center;">
+                            <p>姓名:</p>
+                        </div>
+                        <div class="col-xs-8">
+                            <input id="nameInput" type="text" maxlength="6" class="form-control" width="200"/>
+                        </div>
+                    </div>
+                    <br>
+                    <div class="row">
+                        <div class="col-xs-2" style="text-align: center;">
+                            <p>备注:</p>
+                        </div>
+                        <div class="col-xs-8">
+                            <textarea class="form-control" rows="3" id="_logInput" style="resize: none;"></textarea>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" type="button" onclick="submit()">提交</button>
+                </div>
+            </div><!-- modal-content -->
+        </div><!-- modal-dialog -->
+    </div>
 </body>
 <!-- 弹窗插件-->
 <script src="static/zeroModal/zeroModal.js"></script>
@@ -144,5 +249,6 @@
 
 <link   href="static/css/common.css" rel="stylesheet" type="text/css"  />
 <script src="static/js/_$lib.js"></script>
+<script src="static/js/Base64.js"></script>
 
 </html>

@@ -12,6 +12,21 @@ body.dinner
     -webkit-background-size:cover;
     background-size:cover;
 }
+
+.topzindex
+{
+    z-index: 1002;
+}
+
+.highzindex
+{
+    z-index: 1001;
+}
+.navbarzindex
+{
+    z-index: 1000;
+}
+
 div.common
 {
     width: 100%;
@@ -31,11 +46,8 @@ div.margin-gap
 {
     margin-top:30px;
 }
-/*装载footer的div*/
-div.foot
-{
-    z-index: 1000;
-}
+
+
 div.footLine
 {
     border-top:1px solid #C0C0C0;
@@ -51,28 +63,11 @@ div.footer
     padding:15px auto 10px;
 }
 
-
-.div_grid {
-    display: table;
-    border-spacing: 4px;
-}
-.div_row {
-    display: table-row;
-}
-.div_ItemRenderer {
-    display: table-cell;
-    width: 240px;
-    background-color: #ffffff;
-    border: 8px solid #ddd;
-    vertical-align: top;
-    text-align: center;
-}
-
 .logo {
     border-radius: 50%;
     border: 3px solid #FFF;
-    box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.3); }
-
+    box-shadow: 0 0 1px 1px rgba(0, 0, 0, 0.3);
+}
 
 ul.outside
 {
@@ -86,3 +81,21 @@ ul.outside
 @media screen and (max-width: 800px) { .post-content h3 { font-size: 22px; } }
 .post-content h4 { font-size: 20px; }
 @media screen and (max-width: 800px) { .post-content h4 { font-size: 18px; } }
+
+div.itemHover {
+    cursor:pointer ;
+    padding: 4px;
+    line-height: 1.42857143;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    -webkit-transition: border .3s ease-in-out;
+    -o-transition: border .3s ease-in-out;
+    transition: border .3s ease-in-out;
+}
+
+div.itemHover:hover,
+div.itemHover:focus,
+div.itemHover.active {
+    border-color: #ff0000;
+}
