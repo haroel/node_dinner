@@ -70,6 +70,29 @@ handlers["GET /dj/create"] = function*(next)
     }
 };
 
+// 检查链接是否可用
+handlers["GET /check_link"] = function*(next)
+{
+    let req = this.request;
+    let link = req.query["link"];
+    let roomId = req.query["id"];
+    let exist = yield model.isRoomExist(roomId);
+    if (exist)
+    {
+        this.status = 405;
+        this.body = ErrorCode.ERROR_ROOM_HAD_EXIST;
+        return;
+    }
+    try {
+        let pageList = yield $lib.getEleList(link);
+        model.setCachePage(roomId,pageList);
+        this.body = ( new Buffer( JSON.stringify( pageList ) )).toString('base64');
+    }catch (e)
+    {
+        this.body = e;
+    }
+};
+
 handlers["GET /dj_room.html"] = function*(next)
 {
     let req = this.request;

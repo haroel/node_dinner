@@ -32,16 +32,16 @@
     .menuList
     {
         padding-top: 150px;
-        padding-bottom: 30px
+        padding-bottom: 30px;
     }
     .selectBtn
     {
-
     }
 </style>
 <script>
-    var menuListData = {};
+    var menuListData = null;
     var selectItem = null;
+    var intervalObj = null;
 
     $(function () {
         $("[data-toggle='tooltip']").tooltip();
@@ -76,19 +76,45 @@
         // 重新设置menu按钮位置
         $("#open-button").css("margin-top","35px");
     }
+
+    function showLeftTime(leftTime)
+    {
+        if (intervalObj)
+        {
+            clearInterval(intervalObj);
+            intervalObj = null;
+        }
+        $("#leftTime").html( "剩余时间  " + countTimeStr(leftTime));
+        intervalObj = setInterval(function()
+        {
+            if (leftTime === 0)
+            {
+                clearInterval(intervalObj);
+                intervalObj = null;
+                $("#leftTime").html( "该房间已失效!" );
+                $(".selectBtn").each(function ()
+                                    {
+                                        $(this).attr('disabled',"true");
+                                    });
+                return;
+            }
+            --leftTime;
+            $("#leftTime").html( "剩余时间  " + countTimeStr(leftTime) );
+        },1000);
+    }
+
     window.onload=function()
     {
         var roomId = document.title.replace(/[^\d]*/,"");
         showLoading();
         $.ajax( "dj/get_room",
-                {
-                    dataType:"text",
-                    data:{id :roomId}
+        {
+            dataType:"text",
+            data:{id :roomId}
 
-                }).done (function(data)
+        }).done (function(data)
         {
             removeLoading();
-
             var _o = JSON.parse(Base64.decode(data));
             if (_o)
             {
@@ -98,22 +124,7 @@
                 var leftTime = Math.floor( parseInt(_o.leftTime)/1000 );
                 if (leftTime > 0)
                 {
-                    $("#leftTime").html( "剩余时间  " + countTimeStr(leftTime));
-                    var _p = setInterval(function()
-                    {
-                        if (leftTime === 0)
-                        {
-                            clearInterval(_p);
-                            $("#leftTime").html( "该房间已失效!" );
-                            $(".selectBtn").each(function () {
-                                        $(this).attr('disabled',"true");
-                                    }
-                            );
-                            return;
-                        }
-                        --leftTime;
-                        $("#leftTime").html( "剩余时间  " + countTimeStr(leftTime) );
-                    },1000);
+                    showLeftTime(leftTime);
                 }
                 var itemTemplate = $("#menuListDiv").html();
                 var contens = "";
@@ -131,13 +142,18 @@
                 }
                 $("#menuListDiv").html(contens);
                 $(".col-sm-6").css("visibility","visible");
+                $("#desc").html("<p>" + _o.desc + "</p>");
             }
         }).fail(function(xhr, status)
-                {
-                    removeLoading();
-                    infoDialog( xhr.responseText );
-                }).always(function()
-                {})
+        {
+            removeLoading();
+            infoDialog( xhr.responseText );
+            setTimeout(function()
+            {
+                window.location.href = "dj_index.html";
+            },1000);
+        }).always(function()
+        {})
     };
 
     function openModal(btn)
@@ -159,7 +175,13 @@
     }
     function submit()
     {
-        infoDialog( "提交" );
+        var nameInputStr = $("#nameInput")[0].value;
+        if (!nameInputStr || isChineseChar(nameInputStr) )
+        {
+            errorDialog("请输入中文姓名！");
+            return;
+        }
+
     }
 </script>
 <body class="common">
@@ -171,17 +193,18 @@
                     <h3>NO.{roomId}   <a id="shopLink" href="" >{shopName}</a></h3>
                 </div>
                 <div class="col-xs-4" style="text-align: right;vertical-align: middle">
-                    <h4 style="margin-top: 20px" id="leftTime">leftTime</h4>
+                    <h4 style="margin-top: 20px" id="leftTime"></h4>
                 </div>
             </div>
             <div class="row" style="padding-top: 20px">
-                <div class="col-xs-6" style="text-align: left;padding-left: 60px;vertical-align: middle;height: 100%;visibility: hidden">
-                    <p> 你选择的订单是：<span>{my}</span></p>
+                <div class="col-xs-6" id="desc"
+                     style="text-align: left;padding-left: 60px;vertical-align:
+                      middle;height: 100%;">
                 </div>
                 <div class="col-xs-6" style="text-align: right;">
-                    <button class="btn btn-success" type="button" width="200"
+                    <button class="btn btn-success" type="button" width="200" id="showCardBtn"
                             onclick="onClickSubmit()">
-                        <span class="glyphicon glyphicon-send"></span> 当前订单</button>
+                        <span class="glyphicon glyphicon-send"></span>当前订单</button>
                 </div>
             </div>
         </div>
@@ -189,17 +212,17 @@
     <div class="content-wrap container menuList">
         <div class="row" style="margin-bottom: 20px" id="menuListDiv">
 
-            <div class="col-sm-6 col-md-3 col-lg-2" style="height: 300px;visibility: hidden">
-                <div class="itemHover" style="text-align: center;height: 280px">
+            <div class="col-sm-6 col-md-3 col-lg-2" style="height: 270px;visibility: hidden">
+                <div class="itemHover" style="text-align: center;height: 260px">
                     <img src="{img}"
                          width="100px"
                          height="100px"
                          alt="{name}">
-                    <h3 style="height: 60px;font-size: 1.25em">{name}</h3>
-                    <div >
+                    <h3 style="height: 45px;font-size: 1.25em">{name}</h3>
+                    <div>
                         <p>￥{price}</p>
-                        <button class="btn btn-success selectBtn" id="{menuId}" width="300" onclick="openModal(this)">
-                            选择</button>
+                        <button class="btn btn-success selectBtn"
+                                id="{menuId}" onclick="openModal(this)">选择</button>
                     </div>
                 </div>
             </div>

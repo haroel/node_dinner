@@ -14,6 +14,7 @@ let errors = {
      ERROR_USER_HAD_BOOK: `用户已在该房间预订过`,
      ERROR_ROOM_HAD_EXIST: `该房间已存在，不可重复创建`,
      ERROR_ROOMID_FORMAT_ERROR:`房号错误或者格式不对!`,
+     ERROR_ROOMID_LINK_ERROR:`该链接无法拉取到具体订单数据，请稍后再试!`,
 
     SUCCESS_CREATE_ROOM:`房号创建成功!`
 

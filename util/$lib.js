@@ -93,8 +93,7 @@ let getEleList = function * (_url)
     {
         return Promise.reject(e);
     }
-    try
-    {
+    try {
         let menuList = $(".shopmain").find(".shopmenu-main");
         menuList = menuList.find(".shopmenu-food");
         console.log("menu dom",menuList.length);

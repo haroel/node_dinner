@@ -16,6 +16,9 @@ const CD_Time  = 10 * 60 * 1000; // 每个账号只能10分钟改一次
 let model = {};
 
 model.roomSets = new Set();
+
+model.cachePageHash = new Map();
+
 model.init = ()=>
 {
     let _init = function *()
@@ -40,6 +43,10 @@ model.init = ()=>
     //    id :"547887",
     //    url:"https://www.ele.me/shop/308563"
     //}));
+};
+
+model.setCachePage = function (roomId, pageData) {
+    model.cachePageHash.set(roomId,pageData);
 };
 
 model.getRoomSize = function ()
@@ -76,13 +83,22 @@ model.createRoom = function* ( info )
     yield fsPromise.mkdir(roomDir);
 
     let pageObj = {};
-    try
+    if (model.cachePageHash.has(roomId))
     {
-        pageObj = yield easy_co($lib.getEleList(__url) );
+        pageObj = model.cachePageHash.get(roomId);
+    }else
+    {
+        try
+        {
+            pageObj = yield easy_co($lib.getEleList(__url) );
+        } catch(e)
+        {
+            return Promise.reject(e);
+        }
     }
-    catch(e)
+    if (pageObj.list.length < 1)
     {
-        return Promise.reject(e);
+        return Promise.reject(ErrorCode.ERROR_ROOMID_LINK_ERROR);
     }
     pageObj.desc = desc;
     pageObj.createTime = "" + Date.now();             // 豪秒
@@ -165,6 +181,7 @@ model.removeRoom = ( id ) =>
 {
     let roomDir = path.join(__dirname, ROOMS,id);
     model.roomSets.delete(id);
+    model.cachePageHash.delete(id);
     return fsPromise.rename(roomDir,path.join(__dirname, ROOMS,"_"+id));
     //return fsPromise.removeFile(roomDir)
 };

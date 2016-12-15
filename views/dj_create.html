@@ -24,6 +24,46 @@
 
     $(function () { $('.popover-show').popover( {html : true ,trigger:"click"} );});
 
+    function checkLink()
+    {
+        var roomId = $("#roomInput")[0].value;
+        if (!roomId || !/^\d{6}$/.test(roomId))
+        {
+            errorDialog("请输入有效房号,只能输入数字！");
+            return;
+        }
+        var dinnerUrlInput = $("#dinnerUrlInput")[0].value;
+        if (!dinnerUrlInput || dinnerUrlInput.length < 1)
+        {
+            errorDialog("请输入餐厅外链！");
+            return;
+        }
+        var validTimeInput = $("#validTimeInput")[0].value;
+        if (!validTimeInput || !(/^\d+$/.test(validTimeInput)) )
+        {
+            errorDialog("请输入一个有效时间！");
+            return;
+        }
+        showLoading();
+        $.ajax( "dj/check_link", {
+            dataType:"text",
+            data:{
+                id :roomId, link : dinnerUrlInput
+            }
+        }).done (function(data)
+        {
+            console.log(data);
+            // 勾选界面
+
+
+        }).fail(function(xhr, status)
+        {
+            removeLoading();
+            errorDialog( xhr.responseText );
+        }).always(function()
+        {})
+    }
+
     function createRoom()
     {
         var roomId = $("#roomInput")[0].value;
