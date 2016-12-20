@@ -18,51 +18,16 @@
 <!--<script src="js/html5.js"></script>-->
 <![endif]-->
 <link href="static/css/menu_sideslide.css" rel="stylesheet" type="text/css"  />
+<link href="static/css/bootstrap-slider.css" rel="stylesheet" type="text/css"/>
 
+<script src="static/js/bootstrap-slider.js"></script>
 <!--必要样式-->
+<style>
+
+</style>
 <script>
 
     $(function () { $('.popover-show').popover( {html : true ,trigger:"click"} );});
-
-    function checkLink()
-    {
-        var roomId = $("#roomInput")[0].value;
-        if (!roomId || !/^\d{6}$/.test(roomId))
-        {
-            errorDialog("请输入有效房号,只能输入数字！");
-            return;
-        }
-        var dinnerUrlInput = $("#dinnerUrlInput")[0].value;
-        if (!dinnerUrlInput || dinnerUrlInput.length < 1)
-        {
-            errorDialog("请输入餐厅外链！");
-            return;
-        }
-        var validTimeInput = $("#validTimeInput")[0].value;
-        if (!validTimeInput || !(/^\d+$/.test(validTimeInput)) )
-        {
-            errorDialog("请输入一个有效时间！");
-            return;
-        }
-        showLoading();
-        $.ajax( "dj/check_link", {
-            dataType:"text",
-            data:{
-                id :roomId, link : dinnerUrlInput
-            }
-        }).done (function(data)
-        {
-            console.log(data);
-            // 勾选界面
-
-
-        }).fail(function(xhr, status)
-        {
-            removeLoading();
-            errorDialog( xhr.responseText );
-        }).always(function()
-        {})
-    }
 
     function createRoom()
     {
@@ -78,7 +43,9 @@
             errorDialog("请输入餐厅外链！");
             return;
         }
-        var validTimeInput = $("#validTimeInput")[0].value;
+
+        var mySlider = $("#timeSlider").slider();
+        var validTimeInput = mySlider.slider('getValue');
         if (!validTimeInput || !(/^\d+$/.test(validTimeInput)) )
         {
             errorDialog("请输入一个有效时间！");
@@ -92,7 +59,6 @@
         params.url = dinnerUrlInput;
         params.desc = logInput || "无";
         params.validTime = (parseInt(validTimeInput) * 60 * 1000 + "");
-
         let roomInfo = Base64.encode(JSON.stringify(params)); // 转base64
         showLoading();
         $.ajax( "dj/create",
@@ -114,15 +80,24 @@
         }).always(function()
         {})
     }
+    $(document).ready(function() {
+        $('#timeSlider').slider({
+            formatter: function(value) {
+                return  value + "分钟";
+            }
+        });
+
+    });
 </script>
 <body class="common">
     <div id="left-menu" class="topzindex"></div>
     <div class="container content-wrap">
         <div style="text-align: center">
             <h1>创建新房间</h1>
+
         </div>
         <div class="row">
-            <div class="col-xs-4 " align="right" style="padding:10px;height:auto;" >
+            <div class="col-xs-4 " align="right" style="padding-left: 10px; padding:10px;height:auto;" >
                输入房号
             </div>
             <div class="col-xs-4" align="left">
@@ -133,9 +108,11 @@
             <div class="col-xs-4 " align="right" style="padding:10px;height:auto;" >
                 房间有效时间
             </div>
-            <div class="col-xs-4" align="left">
-                <input id="validTimeInput" type="text" class="form-control" data-toggle="tooltip" data-placement="top" value="180"
-                       title="以分钟为单位,超时将自动删除">
+            <div class="col-xs-4" align="left" style="padding:10px;height:auto;" >
+                <input id="timeSlider" type="text"
+                       data-slider-min="10" data-slider-max="200"
+                       data-slider-step="1" data-slider-value="60"/>
+
             </div>
         </div>
         <div class="row margin-gap">
