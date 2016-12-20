@@ -121,9 +121,8 @@ model.createRoom = function* ( info )
 
 model.addUser = function * (id,userInfo) {
     let userobj = yield model.getUsers(id);
-
     let obj = null;
-    for (var uu of userobj)
+    for (var uu of userobj.list)
     {
         /**同一个人名十分钟只能提交一次**/
         if ( uu.name === userInfo.name )
@@ -132,7 +131,7 @@ model.addUser = function * (id,userInfo) {
             let __dd = (CD_Time - delayTime)/1000;
             if (__dd > 3)
             {
-                return Promise.reject(ErrorCode.ERROR_USER_HAD_BOOK + `,请在${__dd}秒后重试` );
+                return Promise.reject(ErrorCode.ERROR_USER_HAD_BOOK + `,请在${ Math.ceil( __dd/60 )}分钟后重试` );
             }
             obj = uu;
             break;
@@ -146,11 +145,13 @@ model.addUser = function * (id,userInfo) {
     }
     obj.name = userInfo.name;
     obj.ip = userInfo.ip;
-    obj.dinnerId = userInfo.dinnerId;
+    obj.menuId = userInfo.menuId;
     obj.desc = userInfo.desc;
     obj.lastDate = Date.now();
+    userobj.changeDate = Date.now();
 
     let userJsonPath = path.join(__dirname, ROOMS ,id,ROOM_USER_JSON);
+    //console.log("写入订单" + obj.menuId);
     yield fsPromise.writeFile(userJsonPath, JSON.stringify(userobj),"utf8");
 
 };

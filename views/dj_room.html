@@ -35,17 +35,25 @@
         padding-bottom: 30px;
     }
     .selectBtn
-    {
-    }
+    {  }
 </style>
 <script>
     var menuListData = null;
     var selectItem = null;
     var intervalObj = null;
+    var roomId = document.title.replace(/[^\d]*/,"");
 
     $(function () {
         $("[data-toggle='tooltip']").tooltip();
     });
+
+    window.onload=function()
+    {
+        $('#userListModal').on('hide.bs.modal', hideUserListModalHandler);
+        $('#userListModal').on('hidden.bs.modal', hideUserListModalHandler);
+
+        getAllMenu();
+    };
 
     function countTimeStr(leftTime )
     {
@@ -96,6 +104,7 @@
                                     {
                                         $(this).attr('disabled',"true");
                                     });
+                $('#userListModal').modal('hide');
                 return;
             }
             --leftTime;
@@ -103,16 +112,16 @@
         },1000);
     }
 
-    window.onload=function()
+
+    function getAllMenu()
     {
-        var roomId = document.title.replace(/[^\d]*/,"");
         showLoading();
         $.ajax( "dj/get_room",
-        {
-            dataType:"text",
-            data:{id :roomId}
+                {
+                    dataType:"text",
+                    data:{id :roomId}
 
-        }).done (function(data)
+                }).done (function(data)
         {
             removeLoading();
             var _o = JSON.parse(Base64.decode(data));
@@ -145,16 +154,16 @@
                 $("#desc").html("<p>" + _o.desc + "</p>");
             }
         }).fail(function(xhr, status)
-        {
-            removeLoading();
-            infoDialog( xhr.responseText );
-            setTimeout(function()
-            {
-                window.location.href = "dj_index.html";
-            },1000);
-        }).always(function()
-        {})
-    };
+                {
+                    removeLoading();
+                    infoDialog( xhr.responseText );
+                    setTimeout(function()
+                    {
+                        window.location.href = "dj_index.html";
+                    },1000);
+                }).always(function()
+                {})
+    }
 
     function openModal(btn)
     {
@@ -176,12 +185,44 @@
     function submit()
     {
         var nameInputStr = $("#nameInput")[0].value;
-        if (!nameInputStr || isChineseChar(nameInputStr) )
+        if (!nameInputStr || !isChineseChar(nameInputStr) )
         {
-            errorDialog("请输入中文姓名！");
+            infoDialog("请输入中文姓名！");
             return;
         }
+        var params= {};
+        params.name = nameInputStr;
+        params.desc = $("#_logInput")[0].value;
+        params.menuId = selectItem.id;
+        let userInfos = Base64.encode(JSON.stringify(params)); // 转base64
 
+        showLoading();
+        $.ajax( "dj/addUser",
+        {
+            dataType:"text",
+            data:{
+                id :roomId, userInfo : userInfos
+            }
+        }).done (function(data)
+        {
+            removeLoading();
+            $('#submitModal').modal('hide');
+            infoDialog( data );
+        }).fail(function(xhr, status)
+        {
+            removeLoading();
+            infoDialog( xhr.responseText );
+        }).always(function()
+        {})
+    }
+    function showUsers()
+    {
+        $('#userListModal').modal('show');
+        $('#userListModal').find(".modal-body").html( '<iframe width="100%" height="480" src="dj_userList.html?id='+ roomId +'" frameborder="0"></iframe>' )
+    }
+    function hideUserListModalHandler()
+    {
+        $('#userListModal').find(".modal-body").html( "" )
     }
 </script>
 <body class="common">
@@ -193,7 +234,7 @@
                     <h3>NO.{roomId}   <a id="shopLink" href="" >{shopName}</a></h3>
                 </div>
                 <div class="col-xs-4" style="text-align: right;vertical-align: middle">
-                    <h4 style="margin-top: 20px" id="leftTime"></h4>
+                    <p style="margin-top: 20px" id="leftTime"></p>
                 </div>
             </div>
             <div class="row" style="padding-top: 20px">
@@ -203,7 +244,7 @@
                 </div>
                 <div class="col-xs-6" style="text-align: right;">
                     <button class="btn btn-success" type="button" width="200" id="showCardBtn"
-                            onclick="onClickSubmit()">
+                            onclick="showUsers()">
                         <span class="glyphicon glyphicon-send"></span>当前订单</button>
                 </div>
             </div>
@@ -211,7 +252,6 @@
     </nav>
     <div class="content-wrap container menuList">
         <div class="row" style="margin-bottom: 20px" id="menuListDiv">
-
             <div class="col-sm-6 col-md-3 col-lg-2" style="height: 270px;visibility: hidden">
                 <div class="itemHover" style="text-align: center;height: 260px">
                     <img src="{img}"
@@ -255,12 +295,29 @@
                             <p>备注:</p>
                         </div>
                         <div class="col-xs-8">
-                            <textarea class="form-control" rows="3" id="_logInput" style="resize: none;"></textarea>
+                            <textarea class="form-control" rows="3" id="_logInput" style="resize: none;"
+                                      data-toggle="tooltip" data-placement="bottom"  title="可以写口味,冷热等等,不过,我是不会看的..."></textarea>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button class="btn btn-primary" type="button" onclick="submit()">提交</button>
+                </div>
+            </div><!-- modal-content -->
+        </div><!-- modal-dialog -->
+    </div>
+
+    <div class="modal fade" id="userListModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button data-dismiss="modal" class="close" type="button">
+                        <span aria-hidden="true">×</span>
+                        <span class="sr-only">Close</span>
+                    </button>
+                    <h3 class="modal-title">订单分布</h3>
+                </div>
+                <div class="modal-body">
                 </div>
             </div><!-- modal-content -->
         </div><!-- modal-dialog -->
@@ -273,5 +330,4 @@
 <link   href="static/css/common.css" rel="stylesheet" type="text/css"  />
 <script src="static/js/_$lib.js"></script>
 <script src="static/js/Base64.js"></script>
-
 </html>

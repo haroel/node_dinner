@@ -6,7 +6,6 @@ const path = require("path");
 
 
 const TEMPLATE_KEYS = new Set([
-    "{_base.html}",
     "{_footer.html}"
     ]);
 

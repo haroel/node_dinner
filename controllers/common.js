@@ -13,5 +13,7 @@ handlers["GET /about.html"] = function *(next)
 {
     this.body = viewtemplate("about.html");
 };
-handlers["GET /"] = handlers["GET /about.html"]
+
+handlers["GET /"] = handlers["GET /about.html"];
+
 module.exports = handlers;

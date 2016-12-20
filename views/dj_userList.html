@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>{title}</title>
+</head>
+<!-- Icon库-->
+<link   href="http://cdn.bootcss.com/font-awesome/4.2.0/css/font-awesome.min.css" rel="stylesheet">
+<!-- bootstrap -->
+<link   href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet" >
+<link   href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap-theme.min.css" rel="stylesheet">
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<!--[if IE]>
+<!--<script src="js/html5.js"></script>-->
+<![endif]-->
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.js"></script>
+<!-- Latest compiled and minified Locales -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/locale/bootstrap-table-zh-CN.min.js"></script>
+
+<link href="static/css/menu_sideslide.css" rel="stylesheet" type="text/css"  />
+<style>
+    span
+    {
+        color: #ff0000;
+        font-style:italic;
+    }
+</style>
+<script>
+
+    var _interval = null;
+    var _changeDate = 0;
+    var _menuHash = null;
+
+    window.onload=function()
+    {
+        $.ajax( "dj/get_room",
+        {
+            dataType:"text",
+            data:{
+                id :document.title
+            }
+        }).done (function(data)
+        {
+            _menuHash = new g.Hash();
+            var _o = JSON.parse(Base64.decode(data));
+            if (_o)
+            {
+                _o.list.forEach(function (element)
+                {
+                    _menuHash.set(element.id,element)
+                });
+                refreshList();
+                _interval = setInterval( refreshList,2500);
+            }
+        }).fail(function(xhr, status)
+        {
+            infoDialog( xhr.responseText );
+        }).always(function()
+        {});
+    };
+
+    function refreshList()
+    {
+        $.ajax( "dj/getUsers",
+        {
+            dataType:"text",
+            data:{
+                id :document.title
+            }
+        }).done (function(data)
+        {
+            var _o = JSON.parse(Base64.decode(data));
+            if (_o && _changeDate != _o._changeDate)
+            {
+                _changeDate = _o._changeDate;
+                showUserList(_o.list);
+            }
+        }).fail(function(xhr, status)
+        {
+            infoDialog( xhr.responseText );
+            if (_interval)
+            {
+                clearInterval(_interval);
+                _interval = null;
+            }
+        }).always(function()
+        {})
+    }
+
+    function showUserList(list)
+    {
+        var len = list.length;
+        var _hash = new g.MultiHash();
+
+        for (var i = 0;i < len;i++)
+        {
+            var _obj = list[i];
+            _hash.set( _obj.menuId, _obj );
+        }
+        var contents = "";
+        _hash.forEach(function (key, value) {
+
+            if (value.length > 0)
+            {
+                contents += "<p> 选择 <span>" + _menuHash.get( key ).name + "</span>的有 " + value.length + "个";
+                var tab = '<table id="tab_'+  key +'"></table>';
+                contents += tab;
+                contents += "<br>";
+            }
+        } );
+        $("#list_div").html( contents );
+
+        _hash.forEach(function (key, value) {
+            value.forEach(function (obj) {
+                var d = new Date(obj.lastDate);
+                obj.lastDate = d.toLocaleString();
+            });
+            var params = {};
+            params.columns =
+                    [{
+                        field: 'name',
+                        title: '姓名'
+                    }, {
+                        field: 'desc',
+                        title: '描述'
+                    }, {
+                        field: 'lastDate',
+                        title: '更新时间'
+                    }];
+            params.data = value;
+            $("#tab_" + key).bootstrapTable(params);
+
+        } );
+    }
+</script>
+<body>
+<div id="list_div">
+</div>
+<!-- 弹窗插件-->
+<script src="static/zeroModal/zeroModal.js"></script>
+<link   href="static/zeroModal/zeroModal.css" rel="stylesheet"/>
+<link   href="static/css/common.css" rel="stylesheet" type="text/css"  />
+<script src="static/js/_$lib.js"></script>
+<script src="static/js/Base64.js"></script>
+</body>
+</html>

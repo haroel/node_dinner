@@ -45,7 +45,15 @@ handlers["GET /dj/create"] = function*(next)
 
     if (!roomId || !_data)
     {
+        this.status = 405;
         this.body = ErrorCode.ERROR_PARAM_ERROR;
+        return;
+    }
+    let exist = yield model.isRoomExist(roomId);
+    if (exist)
+    {
+        this.status = 405;
+        this.body = ErrorCode.ERROR_ROOM_HAD_EXIST;
         return;
     }
     // base64解码
@@ -67,29 +75,6 @@ handlers["GET /dj/create"] = function*(next)
     {
         this.status = 405;
         this.body = ErrorCode.ERROR_ROOMID_FORMAT_ERROR;
-    }
-};
-
-// 检查链接是否可用
-handlers["GET /check_link"] = function*(next)
-{
-    let req = this.request;
-    let link = req.query["link"];
-    let roomId = req.query["id"];
-    let exist = yield model.isRoomExist(roomId);
-    if (exist)
-    {
-        this.status = 405;
-        this.body = ErrorCode.ERROR_ROOM_HAD_EXIST;
-        return;
-    }
-    try {
-        let pageList = yield $lib.getEleList(link);
-        model.setCachePage(roomId,pageList);
-        this.body = ( new Buffer( JSON.stringify( pageList ) )).toString('base64');
-    }catch (e)
-    {
-        this.body = e;
     }
 };
 
@@ -120,6 +105,35 @@ handlers["GET /dj_room.html"] = function*(next)
         this.body = viewtemplate("error.html").replace("{error}", ErrorCode.ERROR_ROOMID_FORMAT_ERROR);
     }
 };
+
+handlers["GET /dj_userList.html"] = function*(next)
+{
+    let req = this.request;
+    let roomId = req.query["id"];
+    if (roomId && /^\d{6}$/.test(roomId))
+    {
+        try {
+            let exist = yield model.isRoomExist(roomId);
+            if (exist)
+            {
+                let content = viewtemplate("dj_userList.html");
+                content = content.replace("{title}",roomId);
+
+                this.body = content;
+            }else
+            {
+                this.body = viewtemplate("error.html").replace("{error}",ErrorCode.ERROR_NOT_FOUND_ROOM);
+            }
+        }catch (error)
+        {
+            this.body = viewtemplate("error.html").replace("{error}",error);
+        }
+    }else
+    {
+        this.body = viewtemplate("error.html").replace("{error}", ErrorCode.ERROR_ROOMID_FORMAT_ERROR);
+    }
+};
+
 /** 获取房间信息 **/
 handlers["GET /dj/get_room"] = function*(next)
 {
@@ -134,7 +148,7 @@ handlers["GET /dj/get_room"] = function*(next)
         }catch (error)
         {
             this.status = 405;
-            this.body = error;
+            this.body = error.toString();
         }
     }else
     {
@@ -166,6 +180,7 @@ handlers["GET /dj/check_room"] = function*(next)
         this.body = ErrorCode.ERROR_ROOMID_FORMAT_ERROR;
     }
 };
+
 //增加一个订单
 handlers["GET /dj/addUser"] = function*(next)
 {
@@ -179,11 +194,30 @@ handlers["GET /dj/addUser"] = function*(next)
         let userObj = JSON.parse(userInfoStr);
         userObj.ip = ip;
         yield model.addUser(roomId, userObj);
-
+        this.status = 200;
+        this.body = "success!";
     }catch (error)
     {
         this.status = 405;
-        this.body = viewtemplate("error.html").replace("{error}",error);
+        this.body = error;
+        console.log("error",error)
+    }
+};
+
+handlers["GET /dj/getUsers"] = function*(next)
+{
+    let req = this.request;
+    let roomId = req.query["id"];
+    let ip = req.query["ip"];
+    try
+    {
+        let users = yield model.getUsers(roomId);
+        this.status = 200;
+        this.body = (new Buffer( JSON.stringify( users ) ).toString('base64'));
+    }catch(e)
+    {
+        this.status = 405;
+        this.body = e;
     }
 };
 
