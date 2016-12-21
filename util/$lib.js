@@ -11,8 +11,11 @@ const cheerio = require("cheerio");
 const child_process = require('child_process');
 const spawn = child_process.spawn;
 const exec = child_process.exec;
+const os = require("os");
+let _os = os.type();
 
 let trace = console.log;
+
 
 let getWebPageContent = function (_url) {
 
@@ -46,7 +49,17 @@ let getHtml = function (url) {
                 path.join(__dirname,"bin","phantomjs_get.js"),
                 url
             ];
-            let free = spawn( path.join(__dirname,"bin",'phantomjs'), params);
+
+            let execPath = "";
+            if (_os === "Darwin")
+            {
+                execPath = path.join(__dirname,"bin",'phantomjs')
+            }else if ( _os === "Windows_NT")
+            {
+                execPath = path.join(__dirname,"bin",'phantomjs.exe')
+            }
+
+            let free = spawn( execPath , params);
             // 捕获标准输出并将其打印到控制台
             free.stdout.on('data', function (data) {
                 htmlData += "" + data;
