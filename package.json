@@ -1,0 +1,15 @@
+{
+  "name": "PageSite",
+  "version": "0.0.1",
+  "description": "This is for study koa project !",
+  "author": {
+    "name": "ihowe",
+    "email": "ihowe@outlook.com"
+  },
+  "dependencies": {
+    "koa": "~1.2.4",
+    "koa-router": "~5.4.0",
+    "cheerio":"~0.22.0"
+  },
+  "main":"index.js"
+}
