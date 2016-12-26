@@ -5,6 +5,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="Content-Type" content="text/html; charset=gbk" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="author" content="ihowe">
     <title>{title}</title>
 </head>
@@ -43,9 +44,6 @@
     var intervalObj = null;
     var roomId = document.title.replace(/[^\d]*/,"");
 
-    $(function () {
-        $("[data-toggle='tooltip']").tooltip();
-    });
 
     window.onload=function()
     {
@@ -147,11 +145,19 @@
                     items = items.replace( "{name}",obj.name );
                     items = items.replace( "{price}",obj.price );
                     items = items.replace( "{menuId}",obj.id );
+                    items = items.replace( "{tooltip}",obj.tooltip );
+                    items = items.replace( "{star}",obj.star );
                     contens+=items;
                 }
                 $("#menuListDiv").html(contens);
                 $(".col-sm-6").css("visibility","visible");
                 $("#desc").html("<p>" + _o.desc + "</p>");
+
+
+                $(function () {
+                    $("[data-toggle='tooltip']").tooltip();
+                });
+
             }
         }).fail(function(xhr, status)
                 {
@@ -230,11 +236,11 @@
     <nav class="navbar navbar-default navbar-fixed-top navbarzindex" role="navigation" style="height: 120px;">
         <div class="container">
             <div class="row">
-                <div class="col-xs-8" style="text-align: left;padding-left: 60px;vertical-align: middle">
-                    <h3>NO.{roomId}   <a id="shopLink" href="" >{shopName}</a></h3>
+                <div class="col-sm-8" style="text-align: left;padding-left: 60px;vertical-align: middle">
+                    <p>NO.{roomId}   <a id="shopLink" href=""  target="_blank" >{shopName}</a></p>
                 </div>
-                <div class="col-xs-4" style="text-align: right;vertical-align: middle">
-                    <p style="margin-top: 20px" id="leftTime"></p>
+                <div class="col-sm-4" style="text-align: right;vertical-align: middle">
+                    <p id="leftTime"></p>
                 </div>
             </div>
             <div class="row" style="padding-top: 20px">
@@ -252,13 +258,15 @@
     </nav>
     <div class="content-wrap container menuList">
         <div class="row" style="margin-bottom: 20px" id="menuListDiv">
+
             <div class="col-sm-6 col-md-3 col-lg-2" style="height: 270px;visibility: hidden">
                 <div class="itemHover" style="text-align: center;height: 260px">
                     <img src="{img}"
                          width="100px"
                          height="100px"
-                         alt="{name}">
-                    <h3 style="height: 45px;font-size: 1.25em">{name}</h3>
+                         alt="{name}" title ="{tooltip}" data-toggle="tooltip" data-placement="bottom" >
+                    <h5>{star}</h5>
+                    <h3 style="height: 33px;font-size: 1.25em">{name}</h3>
                     <div>
                         <p>￥{price}</p>
                         <button class="btn btn-success selectBtn"

@@ -123,6 +123,8 @@ let getEleList = function * (_url)
             obj.img = "http:"+$(element).find("img").attr("ng-src");
             obj.name = $(element).find(".col-2 h3").text();
             obj.price = $(element).find(".col-3").html().replace(/[^\d]+/,"");
+            obj.tooltip = $(element).find(".col-2 .color-mute").text();
+            obj.star = $(element).find(".col-2").find(".starrating").attr('title');
             arr.push(obj);
         });
         result.list = arr;

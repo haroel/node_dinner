@@ -80,7 +80,6 @@ model.createRoom = function* ( info )
         yield model.removeRoom(roomId);
         return Promise.reject(ErrorCode.ERROR_ROOM_HAD_EXIST);
     }
-    yield fsPromise.mkdir(roomDir);
 
     let pageObj = {};
     if (model.cachePageHash.has(roomId))
@@ -104,6 +103,7 @@ model.createRoom = function* ( info )
     pageObj.createTime = "" + Date.now();             // 豪秒
     pageObj.endTime = "" + (Date.now() + validTime); // 结束时间
 
+    yield fsPromise.mkdir(roomDir);
     //创建room.json
     let roomobj = pageObj;
     let roomJsonPath = path.join(roomDir,ROOM_STATIC_JSON);

@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
     <meta name="author" content="ihowe">
     <title>{title}</title>
 </head>
@@ -97,29 +98,28 @@
 
         </div>
         <div class="row">
-            <div class="col-xs-4 " align="right" style="padding-left: 10px; padding:10px;height:auto;" >
+            <div class="col-sm-4 " align="center" style="padding-left: 10px; padding:10px;height:auto;" >
                输入房号
             </div>
-            <div class="col-xs-4" align="left">
+            <div class="col-sm-4 col-xs-12" align="left">
                 <input id="roomInput" type="text" maxlength="6" class="form-control" width="200" data-toggle="tooltip" data-placement="top" title="6位有效数字">
             </div>
         </div>
         <div class="row margin-gap">
-            <div class="col-xs-4 " align="right" style="padding:10px;height:auto;" >
-                房间有效时间
+            <div class="col-sm-4 " align="center" style="padding:10px;height:auto;" >
+                房间有效时间(最长200分钟)
             </div>
-            <div class="col-xs-4" align="left" style="padding:10px;height:auto;" >
+            <div class="col-sm-4 col-xs-12" align="left" style="padding:10px;height:auto;" >
                 <input id="timeSlider" type="text"
                        data-slider-min="10" data-slider-max="200"
                        data-slider-step="1" data-slider-value="60"/>
-
             </div>
         </div>
         <div class="row margin-gap">
-            <div class="col-xs-4 " align="right" style="padding:10px;height:auto;" >
+            <div class="col-sm-4 " align="center" style="padding:10px;height:auto;" >
                 订餐链接
             </div>
-            <div class="col-xs-6" align="left">
+            <div class="col-sm-6 col-xs-12" align="left">
                 <div class="input-group">
                     <input id="dinnerUrlInput" type="text" class="form-control"
                            width="200" data-toggle="tooltip" data-placement="top" title="饿了么餐厅链接">
@@ -137,15 +137,15 @@
             </div>
         </div>
         <div class="row margin-gap">
-            <div class="col-xs-4 " align="right" style="padding:10px;height:auto;" >公告说明</div>
-            <div class="col-xs-6 ">
+            <div class="col-sm-4 " align="center" style="padding:10px;height:auto;" >公告说明</div>
+            <div class="col-sm-6 col-xs-12">
                 <textarea class="form-control" rows="5" id="logInput"></textarea>
             </div>
         </div>
         <div class="row margin-gap">
             <div class="col-xs-4 " ></div>
             <div class="col-xs-2 ">
-                <button class="btn btn-block btn-success" type="button" width="200" onclick="createRoom()">
+                <button class="btn btn-success" type="button" width="300" onclick="createRoom()">
                     <span class="glyphicon glyphicon-send"></span> 提交</button>
             </div>
         </div>

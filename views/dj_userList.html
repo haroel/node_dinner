@@ -74,9 +74,9 @@
         }).done (function(data)
         {
             var _o = JSON.parse(Base64.decode(data));
-            if (_o && _changeDate != _o._changeDate)
+            if (_o && _changeDate != _o.changeDate)
             {
-                _changeDate = _o._changeDate;
+                _changeDate = _o.changeDate;
                 showUserList(_o.list);
             }
         }).fail(function(xhr, status)
