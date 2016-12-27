@@ -16,4 +16,14 @@ handlers["GET /about.html"] = function *(next)
 
 handlers["GET /"] = handlers["GET /about.html"];
 
+handlers["404"] = function *( url )
+{
+    if (url.indexOf(".") >= 0)
+    {
+        console.log("404错误 ",url);
+        return viewtemplate("404.html");
+    }
+    return "404";
+};
+
 module.exports = handlers;

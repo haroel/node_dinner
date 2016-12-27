@@ -62,7 +62,7 @@
         params.validTime = (parseInt(validTimeInput) * 60 * 1000 + "");
         let roomInfo = Base64.encode(JSON.stringify(params)); // 转base64
         showLoading();
-        $.ajax( "dj/create",
+        $.ajax( "wf/create",
         {
             dataType:"text",
             data:{
@@ -73,7 +73,7 @@
             console.log(data);
             removeLoading();
 //            alert(data);
-            window.location.href="dj_room.html?id=" + roomId
+            window.location.href="wf_room.html?id=" + roomId
         }).fail(function(xhr, status)
         {
             removeLoading();

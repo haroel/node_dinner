@@ -114,7 +114,7 @@
     function getAllMenu()
     {
         showLoading();
-        $.ajax( "dj/get_room",
+        $.ajax( "wf/get_room",
                 {
                     dataType:"text",
                     data:{id :roomId}
@@ -126,8 +126,6 @@
             if (_o)
             {
                 menuListData = _o;
-                $("#shopLink").attr("href",_o.link);
-                $("#shopLink").html( _o.title );
                 var leftTime = Math.floor( parseInt(_o.leftTime)/1000 );
                 if (leftTime > 0)
                 {
@@ -165,7 +163,7 @@
                     infoDialog( xhr.responseText );
                     setTimeout(function()
                     {
-                        window.location.href = "dj_index.html";
+                        window.location.href = "wf_index.html";
                     },1000);
                 }).always(function()
                 {})
@@ -203,7 +201,7 @@
         let userInfos = Base64.encode(JSON.stringify(params)); // 转base64
 
         showLoading();
-        $.ajax( "dj/addUser",
+        $.ajax( "wf/addUser",
         {
             dataType:"text",
             data:{
@@ -224,7 +222,7 @@
     function showUsers()
     {
         $('#userListModal').modal('show');
-        $('#userListModal').find(".modal-body").html( '<iframe width="100%" height="480" src="dj_userList.html?id='+ roomId +'" frameborder="0"></iframe>' )
+        $('#userListModal').find(".modal-body").html( '<iframe width="100%" height="480" src="wf_userList.html?id='+ roomId +'" frameborder="0"></iframe>' )
     }
     function hideUserListModalHandler()
     {
@@ -236,14 +234,14 @@
     <nav class="navbar navbar-default navbar-fixed-top navbarzindex" role="navigation" style="height: 120px;">
         <div class="container">
             <div class="row">
-                <div class="col-sm-8" style="text-align: left;padding-left: 60px;vertical-align: middle">
-                    <p>NO.{roomId}   <a id="shopLink" href=""  target="_blank" >{shopName}</a></p>
+                <div class="col-sm-8" style="text-align: left;vertical-align: middle">
+                    <p>NO.{roomId}   <a href="{shopLink}"  target="_blank" >{shopName}</a> 菜单数量:{menuNum}</p>
                 </div>
                 <div class="col-sm-4" style="text-align: right;vertical-align: middle">
                     <p id="leftTime"></p>
                 </div>
             </div>
-            <div class="row" style="padding-top: 20px">
+            <div class="row">
                 <div class="col-xs-6" id="desc"
                      style="text-align: left;padding-left: 60px;vertical-align:
                       middle;height: 100%;">
@@ -323,7 +321,7 @@
                         <span aria-hidden="true">×</span>
                         <span class="sr-only">Close</span>
                     </button>
-                    <h3 class="modal-title">订单分布</h3>
+                    <p class="modal-title"> 订单分布  <a href="wf_userList.html?id={roomId}"  target="_blank" >查看</a></p>
                 </div>
                 <div class="modal-body">
                 </div>

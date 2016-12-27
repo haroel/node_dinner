@@ -9,10 +9,13 @@ var url = system.args[1];
 
 page.open(url, function (s)
 {
-   var content = page.evaluate(function()
-   {
-    return document.body.innerHTML;
-  });
-  console.log("innerHTML",content);
-  phantom.exit();
+    setTimeout(function()
+    {
+        var content = page.evaluate(function()
+        {
+            return document.body.innerHTML;
+        });
+        console.log(content);
+        phantom.exit();
+    },1000);
 });

@@ -21,7 +21,7 @@ let addMapping = function (router, mapping)
             router.post(path, mapping[url]);
             console.log(`register URL mapping: POST ${path}`);
         } else {
-            console.log(`invalid URL: ${url}`);
+            //console.log(`invalid URL: ${url}`);
         }
     }
 };
@@ -43,5 +43,15 @@ module.exports.initControllers = function (router)
         // 导入js文件:
         let mapping = require( path.join(controllerJsPath,f) );
         addMapping(router,mapping);
+    }
+};
+
+
+var commonControll = require("./controllers/common.js");
+module.exports.endHandler = function *(koa)
+{
+    if (koa.status == 404)
+    {
+        koa.body = yield commonControll[404](koa.request.url);
     }
 };

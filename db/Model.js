@@ -122,6 +122,7 @@ model.createRoom = function* ( info )
 model.addUser = function * (id,userInfo) {
     let userobj = yield model.getUsers(id);
     let obj = null;
+    let sameIpNum =0;
     for (var uu of userobj.list)
     {
         /**同一个人名十分钟只能提交一次**/
@@ -136,6 +137,14 @@ model.addUser = function * (id,userInfo) {
             obj = uu;
             break;
         }
+        if (uu.ip == userInfo.ip)
+        {
+            ++sameIpNum;
+        }
+    }
+    if (sameIpNum >= 2)
+    {
+        return Promise.reject(ErrorCode.ERROR_ROOMID_IP_ERROR);
     }
     // 新增用户订单
     if (!obj)

@@ -28,16 +28,21 @@
         color: #ff0000;
         font-style:italic;
     }
+    th
+    {
+        font-size:1.1em;
+        text-align:center;
+        color:#b1b1b1;
+    }
 </style>
 <script>
-
     var _interval = null;
     var _changeDate = 0;
     var _menuHash = null;
 
     window.onload=function()
     {
-        $.ajax( "dj/get_room",
+        $.ajax( "wf/get_room",
         {
             dataType:"text",
             data:{
@@ -65,7 +70,7 @@
 
     function refreshList()
     {
-        $.ajax( "dj/getUsers",
+        $.ajax( "wf/getUsers",
         {
             dataType:"text",
             data:{
@@ -130,10 +135,13 @@
                     }, {
                         field: 'lastDate',
                         title: '更新时间'
+                    },
+                        {
+                        field: 'ip',
+                        title: 'IP'
                     }];
             params.data = value;
             $("#tab_" + key).bootstrapTable(params);
-
         } );
     }
 </script>

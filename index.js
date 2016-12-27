@@ -8,6 +8,7 @@ const Router = require('koa-router');
 const config = require('./__config.js');
 var controller = require("./controller.js");
 
+
 var staticFiles = require("./util/static_files.js");
 
 let app = koa();
@@ -20,7 +21,7 @@ app.use( function *(next) {
     execTime = new Date().getTime() - start;
     this.response.set('X-Response-Time', `${execTime}ms`);
     console.log(`Process ${this.request.method} ${this.request.ip}  ${this.request.url} 处理时间${execTime}ms...`);
-
+    yield controller.endHandler(this);
 });
 
 app.use( staticFiles( '/static/', path.join( __dirname,"views","static") ) );

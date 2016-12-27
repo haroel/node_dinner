@@ -21,7 +21,6 @@
 <![endif]-->
 <!--必要样式-->
 <link href="static/css/menu_sideslide.css" rel="stylesheet" type="text/css"  />
-
 <style>
     .margin-gap a{color:#ddd; font-size: 14px;  }
     .margin-gap a:link {color:#ddd;}      /* 未访问链接*/
@@ -45,7 +44,7 @@
             return;
         }
         showLoading();
-        $.ajax( "dj/check_room",
+        $.ajax( "wf/check_room",
         {
             dataType:"text",
             data:{id :roomId}
@@ -53,7 +52,7 @@
         }).done (function(data)
         {
             removeLoading();
-            window.open("dj_room.html?id=" + roomId);
+            window.open("wf_room.html?id=" + roomId);
         }).fail(function(xhr, status)
         {
             removeLoading();
@@ -77,7 +76,7 @@
                 </span>
         </div>
         <div class="margin-gap" align="center">
-            <b><a href="dj_create.html" target="_blank"
+            <b><a href="wf_create.html" target="_blank"
                   data-toggle="tooltip" data-placement="bottom"  title="当前数量 {num}">创建新房间</a></b>
         </div>
     </div>
