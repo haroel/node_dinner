@@ -40,5 +40,5 @@ let server = app.listen(config.SERVER_PORT,config.SERVER_IP,  function (error)
     }
     var host = server.address().address;
     var port = server.address().port;
-    console.log("The server is Started！ ",server.address());
+    console.log(`Success!,  http://${host}:${port} `);
 });

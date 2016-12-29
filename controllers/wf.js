@@ -178,7 +178,37 @@ handlers["GET /wf/get_room"] = function*(next)
         this.body = ErrorCode.ERROR_ROOMID_FORMAT_ERROR;
     }
 };
+/**发送进入房间的请求 **/
+handlers["GET /dj/check_room"] = function*(next)
+{
+    let req = this.request;
+    let roomId = req.query["id"];
+    let ip = req["ip"];
+    if (!IpLock( req.url, ip, 1000 ))
+    {
+        this.status = 405;
+        this.body = ErrorCode.ERROR_REQUEST_FREQUENT;
+        return;
+    }
 
+    if (roomId && /^\d{6}$/.test(roomId))
+    {
+        try {
+            let _o = yield model.getRoom(roomId);
+            this.status = 200;
+            this.body = "success!";
+
+        }catch (error)
+        {
+            this.status = 405;
+            this.body = error;
+        }
+    }else
+    {
+        this.status = 405;
+        this.body = ErrorCode.ERROR_ROOMID_FORMAT_ERROR;
+    }
+};
 //增加一个订单
 handlers["GET /wf/addUser"] = function*(next)
 {
