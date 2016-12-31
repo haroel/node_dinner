@@ -12,7 +12,8 @@ const ROOMS = "rooms";
 const ROOM_STATIC_JSON = "room.json";
 const ROOM_USER_JSON = "users.json";
 
-const CD_Time  = 10 * 60 * 1000; // 每个账号只能10分钟改一次
+const CD_Time = 10 * 60 * 1000; // 每个账号只能10分钟改一次
+const MAX_ROOM_SIZE = 10;
 let model = {};
 
 model.roomSets = new Set();
@@ -63,6 +64,10 @@ model.isRoomExist = function *(roomId) {
 
 model.createRoom = function* ( info )
 {
+    if (model.getRoomSize() > MAX_ROOM_SIZE)
+    {
+        return Promise.reject(ErrorCode.ERROR_ROOM_MAX_SIZE);
+    }
     let roomId = info.id;
     let __url = info.url;
     let desc = info.desc || "*";

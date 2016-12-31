@@ -194,3 +194,14 @@
 	-webkit-transform: translate3d(0,0,0);
 	transform: translate3d(0,0,0);
 }
+
+.menu-social-icon-n
+{
+	display:inline-block;
+	margin-left: 15px
+}
+.menu-social-icon
+{
+	display:inline-block;
+	margin-left: 15px
+}

@@ -16,6 +16,12 @@ handlers["GET /about.html"] = function *(next)
 
 handlers["GET /"] = handlers["GET /about.html"];
 
+// 网页标题icon
+handlers["GET /favicon.ico"] = function*(next)
+{
+    this.redirect("/static/favicon.ico");
+};
+// 处理404错误
 handlers["404"] = function *( url )
 {
     if (url.indexOf(".") >= 0)
