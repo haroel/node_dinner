@@ -62,7 +62,7 @@ function _viewHelperInit()
     if (left_menu)
     {
         $.get("static/html/_menu.html",function(data){
-            $(left_menu).html(data);
+            $(left_menu).replaceWith(data);
             // menu初始化后回调函数
             if (window.menuInitedCallback)
             {
@@ -72,7 +72,7 @@ function _viewHelperInit()
     }
     if (footer) {
         $.get("static/html/_footer.html", function (data) {
-            $(footer).html(data);
+            $(footer).replaceWith(data);
             if (window.footerInitedCallback)
             {
                 window.footerInitedCallback();

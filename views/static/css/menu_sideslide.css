@@ -2,20 +2,20 @@
 
 
 .menu-wrap a {
-	color: #b8b7ad;
+	color: #d1d1d1;
 }
-
+.menu-wrap a:link {
+	text-decoration:none;
+}
 .menu-wrap a:hover,
 .menu-wrap a:focus {
-	color: #c94e50;
+	color: #d94e50;
 }
 
 .content-wrap {
 	overflow-y: scroll;
 	-webkit-overflow-scrolling: touch;
 }
-
-
 
 /* Menu Button */
 .menu-button {
@@ -105,9 +105,10 @@
 	padding:6px 10px;
 }
 
-.menu, 
+.menu,
 .icon-list {
 	height: 100%;
+	text-align: left;
 }
 
 .icon-list {
@@ -117,12 +118,19 @@
 
 .icon-list a {
 	display: block;
-	padding: 0.8em;
+	padding: 0.5em 0.8em 0.5em 4.0em;
 	-webkit-transform: translate3d(0,500px,0);
 	transform: translate3d(0,500px,0);
 }
 
 .icon-list,
+
+.icon-list a span {
+	margin-left: 10px;
+	font-weight: 700;
+	font-size:110%;
+}
+
 .icon-list a {
 	-webkit-transition: -webkit-transform 0s 0.4s;
 	transition: transform 0s 0.4s;
@@ -155,10 +163,6 @@
 	transform: translate3d(0,3000px,0);
 }
 
-.icon-list a span {
-	margin-left: 10px;
-	font-weight: 700;
-}
 
 /* Shown menu */
 .show-menu .menu-wrap {
@@ -204,4 +208,9 @@
 {
 	display:inline-block;
 	margin-left: 15px
+}
+
+.menu-tab-link-icon
+{
+	bottom: 20px
 }
