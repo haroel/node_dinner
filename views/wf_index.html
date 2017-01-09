@@ -52,7 +52,8 @@
         }).done (function(data)
         {
             removeLoading();
-            window.open("wf_room.html?id=" + roomId);
+            window.location.href="wf_room.html?id=" + roomId;
+//            window.open("wf_room.html?id=" + roomId);
         }).fail(function(xhr, status)
         {
             removeLoading();
