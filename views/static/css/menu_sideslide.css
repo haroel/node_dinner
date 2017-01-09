@@ -214,3 +214,27 @@
 {
 	bottom: 20px
 }
+
+.menu-item
+{
+	list-style-type:none;
+	text-align: left;
+}
+
+.menu-item li
+{
+	width: 220px;
+	padding-top: 0.2em;
+	padding-bottom: 0.2em;
+	padding-left: 2.2em;
+}
+.menu-item a
+{
+	display:block;
+}
+
+.menu-item a span {
+	margin-left: 10px;
+	font-weight: 700;
+	font-size:110%;
+}

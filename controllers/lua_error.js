@@ -26,7 +26,7 @@ let getNowFormatDate = function () {
         + " " + date.getHours() + seperator2 + date.getMinutes()
         + seperator2 + date.getSeconds();
     return currentdate;
-}
+};
 
 let handlers = {};
 

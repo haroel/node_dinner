@@ -2,6 +2,7 @@
  * Created by howe on 2016/12/5.
  */
 const path = require("path");
+const config = require('../__config.js');
 
 var model = require("../db/Model.js");
 var fsPromise = require("../util/fsPromise.js");
@@ -236,6 +237,27 @@ handlers["GET /wf/addUser"] = function*(next)
         this.status = 405;
         this.body = error;
         console.log("error",error)
+    }
+};
+
+handlers["GET /wf/removeUser"] = function *(next)
+{
+    let req = this.request;
+    let ip = req["ip"];
+    if (ip !== config.SERVER_IP)
+    {
+        this.body = "只允许在服务器上做删除操作！";
+        return;
+    }
+    try
+    {
+        yield model.removeUser(req);
+        this.status = 200;
+        this.body = "success";
+    }catch (e)
+    {
+        this.status = 405;
+        this.body = e;
     }
 };
 

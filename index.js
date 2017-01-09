@@ -6,7 +6,7 @@ const koa = require("koa");
 const Router = require('koa-router');
 
 const config = require('./__config.js');
-var controller = require("./controller.js");
+let controller = require("./controller.js");
 
 
 var staticFiles = require("./util/static_files.js");
@@ -30,7 +30,6 @@ controller.initControllers(router);
 
 app.use(router.routes());
 
-
 let server = app.listen(config.SERVER_PORT,config.SERVER_IP,  function (error)
 {
     if (error)
@@ -38,7 +37,7 @@ let server = app.listen(config.SERVER_PORT,config.SERVER_IP,  function (error)
         console.log(error);
         return;
     }
-    var host = server.address().address;
-    var port = server.address().port;
+    let host = server.address().address;
+    let port = server.address().port;
     console.log(`Success!,  http://${host}:${port} `);
 });

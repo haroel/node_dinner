@@ -170,6 +170,30 @@ model.addUser = function * (id,userInfo) {
 
 };
 
+model.removeUser = function *(userInfo)
+{
+    let id = userInfo.id;
+    let userobj = yield model.getUsers(id);
+    let arr = [];
+    for (var uu of userobj.list)
+    {
+        if ( uu.name === userInfo.name )
+        {
+            continue;
+        }
+        if (uu.ip == userInfo.ip)
+        {
+            continue;
+        }
+        arr.push(uu);
+    }
+    userobj.list = arr;
+    userobj.changeDate = Date.now();
+    let userJsonPath = path.join(__dirname, ROOMS ,id,ROOM_USER_JSON);
+    //console.log("写入订单" + obj.menuId);
+    yield fsPromise.writeFile(userJsonPath, JSON.stringify(userobj),"utf8");
+};
+
 model.getUsers = function * (id )
 {
     let userJsonPath = path.join(__dirname, ROOMS ,id,ROOM_USER_JSON);
