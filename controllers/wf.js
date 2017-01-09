@@ -180,7 +180,7 @@ handlers["GET /wf/get_room"] = function*(next)
     }
 };
 /**发送进入房间的请求 **/
-handlers["GET /dj/check_room"] = function*(next)
+handlers["GET /wf/check_room"] = function*(next)
 {
     let req = this.request;
     let roomId = req.query["id"];
