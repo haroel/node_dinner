@@ -265,10 +265,16 @@ handlers["GET /wf/getUsers"] = function*(next)
 {
     let req = this.request;
     let roomId = req.query["id"];
+    let changeDate = req.query["changeDate"];
+
     let ip = req["ip"];
     try
     {
         let users = yield model.getUsers(roomId);
+        if (changeDate && changeDate == users.changeDate)
+        {
+            users = {changeDate:changeDate};
+        }
         this.status = 200;
         this.body = (new Buffer( JSON.stringify( users ) ).toString('base64'));
     }catch(e)

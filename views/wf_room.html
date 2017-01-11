@@ -20,7 +20,6 @@
 <!--<script src="js/html5.js"></script>-->
 <![endif]-->
 <link href="static/css/menu_sideslide.css" rel="stylesheet" type="text/css"  />
-
 <style>
     .left{
         width:400px;
@@ -35,8 +34,20 @@
         padding-top: 150px;
         padding-bottom: 30px;
     }
-    .selectBtn
-    {  }
+    #list_div span
+    {
+        color: #ff0000;
+        font-style:italic;
+    }
+    #list_div th
+    {
+        text-align:center;
+        color:#b1b1b1;
+    }
+    #list_div
+    {
+        font-size:0.7em;
+    }
 </style>
 <script>
     var menuListData = null;
@@ -44,12 +55,12 @@
     var intervalObj = null;
     var roomId = document.title.replace(/[^\d]*/,"");
 
+    var _interval = null;
+    var _changeDate = 0;
+    var _menuHash = null;
 
     window.onload=function()
     {
-        $('#userListModal').on('hide.bs.modal', hideUserListModalHandler);
-        $('#userListModal').on('hidden.bs.modal', hideUserListModalHandler);
-
         getAllMenu();
     };
 
@@ -102,15 +113,12 @@
                                     {
                                         $(this).attr('disabled',"true");
                                     });
-                $('#userListModal').modal('hide');
                 return;
             }
             --leftTime;
             $("#leftTime").html( "剩余时间  " + countTimeStr(leftTime) );
         },1000);
     }
-
-
     function getAllMenu()
     {
         showLoading();
@@ -118,7 +126,6 @@
                 {
                     dataType:"text",
                     data:{id :roomId}
-
                 }).done (function(data)
         {
             removeLoading();
@@ -151,22 +158,32 @@
                 $(".col-sm-6").css("visibility","visible");
                 $("#desc").html("<p>" + _o.desc + "</p>");
 
-
+                // 启用tooltip
                 $(function () {
                     $("[data-toggle='tooltip']").tooltip();
                 });
-
             }
-        }).fail(function(xhr, status)
+            _menuHash = new g.Hash();
+            if (_o)
+            {
+                _o.list.forEach(function (element)
                 {
-                    removeLoading();
-                    infoDialog( xhr.responseText );
-                    setTimeout(function()
-                    {
-                        window.location.href = "wf_index.html";
-                    },1000);
-                }).always(function()
-                {})
+                    _menuHash.set(element.id,element)
+                });
+                refreshList();
+                _interval = setInterval( refreshList,2500);
+            }
+
+        }).fail(function(xhr, status)
+        {
+            removeLoading();
+            infoDialog( xhr.responseText );
+            setTimeout(function()
+            {
+                window.location.href = "wf_index.html";
+            },2000);
+        }).always(function()
+        {})
     }
 
     function openModal(btn)
@@ -204,9 +221,7 @@
         $.ajax( "wf/addUser",
         {
             dataType:"text",
-            data:{
-                id :roomId, userInfo : userInfos
-            }
+            data:{id :roomId, userInfo : userInfos}
         }).done (function(data)
         {
             removeLoading();
@@ -219,14 +234,78 @@
         }).always(function()
         {})
     }
-    function showUsers()
+    function refreshList()
     {
-        $('#userListModal').modal('show');
-        $('#userListModal').find(".modal-body").html( '<iframe width="100%" height="480" src="wf_userList.html?id='+ roomId +'" frameborder="0"></iframe>' )
+        $.ajax( "wf/getUsers",
+        {
+            dataType:"text",
+            data:{id :roomId,changeDate:_changeDate}
+        }).done (function(data)
+        {
+            var _o = JSON.parse(Base64.decode(data));
+            if (_o && _changeDate != _o.changeDate)
+            {
+                _changeDate = _o.changeDate;
+                showUserList(_o.list);
+            }
+        }).fail(function(xhr, status)
+        {
+            infoDialog( xhr.responseText );
+            if (_interval)
+            {
+                clearInterval(_interval);
+                _interval = null;
+            }
+        }).always(function()
+        {})
     }
-    function hideUserListModalHandler()
+
+    function showUserList(list)
     {
-        $('#userListModal').find(".modal-body").html( "" )
+        var len = list.length;
+        var _hash = new g.MultiHash();
+
+        for (var i = 0;i < len;i++)
+        {
+            var _obj = list[i];
+            _hash.set( _obj.menuId, _obj );
+        }
+        var contents = "";
+        _hash.forEach(function (key, value) {
+
+            if (value.length > 0)
+            {
+                contents += "<p> 选择 <span>" + _menuHash.get( key ).name + "</span>的有 " + value.length + "个";
+                var tab = '<table id="tab_'+  key +'"></table>';
+                contents += tab;
+                contents += "<br>";
+            }
+        } );
+        $("#list_div").html( contents );
+        _hash.forEach(function (key, value) {
+            value.forEach(function (obj) {
+                var d = new Date(obj.lastDate);
+                obj.lastDate = d.toLocaleString();
+            });
+            var params = {};
+            params.columns =
+                    [{
+                        field: 'name',
+                        title: '姓名'
+                    }, {
+                        field: 'desc',
+                        title: '描述'
+                    }, {
+                        field: 'lastDate',
+                        title: '更新时间'
+                    },
+                    {
+                        field: 'ip',
+                        title: 'IP'
+                    }];
+            params.data = value;
+            $("#tab_" + key).bootstrapTable(params);
+        } );
     }
 </script>
 <body class="common">
@@ -242,14 +321,9 @@
                 </div>
             </div>
             <div class="row">
-                <div class="col-xs-6" id="desc"
+                <div class="col-xs-10" id="desc"
                      style="text-align: left;padding-left: 60px;vertical-align:
                       middle;height: 100%;">
-                </div>
-                <div class="col-xs-6" style="text-align: right;">
-                    <button class="btn btn-success" type="button" width="200" id="showCardBtn"
-                            onclick="showUsers()">
-                        <span class="glyphicon glyphicon-send"></span>当前订单</button>
                 </div>
             </div>
         </div>
@@ -312,21 +386,15 @@
             </div><!-- modal-content -->
         </div><!-- modal-dialog -->
     </div>
-
-    <div class="modal fade" id="userListModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <button data-dismiss="modal" class="close" type="button">
-                        <span aria-hidden="true">×</span>
-                        <span class="sr-only">Close</span>
-                    </button>
-                    <p class="modal-title"> 订单分布  <a href="wf_userList.html?id={roomId}"  target="_blank" >查看</a></p>
-                </div>
-                <div class="modal-body">
-                </div>
-            </div><!-- modal-content -->
-        </div><!-- modal-dialog -->
+    <div id="chat_container" style="background-color: #f1f1f1">
+        <div class="title"><i></i> 聊天</div>
+        <div id="chat_div" style="height: 100%;overflow:auto;" >
+            无消息
+        </div>
+    </div>
+    <div id="user_container" style="background-color: #f1f1f1">
+        <div class="title"><i></i> 订单 </div>
+        <div id="list_div" style="height: 100%;overflow:auto;"/>
     </div>
 </body>
 <!-- 弹窗插件-->
@@ -336,4 +404,35 @@
 <link   href="static/css/common.css" rel="stylesheet" type="text/css"  />
 <script src="static/js/_$lib.js"></script>
 <script src="static/js/Base64.js"></script>
+
+<script src="static/js/jquery.sliderBar.js"></script>
+<script type="text/javascript">
+    $(function(){
+        $('#chat_container').sliderBar({
+            open : false,           // 默认是否打开，true打开，false关闭
+            bottom : 30,             // 距离顶部多高
+            width : 400,           // body内容宽度
+            height : 480,          // body内容高度
+            theme : 'green',       // 主题颜色
+            position : 'left'      // 显示位置，有left和right两种
+        });
+
+        $('#user_container').sliderBar({
+            open : false,           // 默认是否打开，true打开，false关闭
+            bottom : 30,             // 距离顶部多高
+            width : 400,           // body内容宽度
+            height : 480,          // body内容高度
+            theme : 'blue',       // 主题颜色
+            position : 'right'      // 显示位置，有left和right两种
+        });
+    });
+</script>
+<!-- Latest compiled and minified CSS -->
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.css">
+<!-- Latest compiled and minified JavaScript -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/bootstrap-table.min.js"></script>
+<!-- Latest compiled and minified Locales -->
+<script src="//cdnjs.cloudflare.com/ajax/libs/bootstrap-table/1.11.0/locale/bootstrap-table-zh-CN.min.js"></script>
+
+
 </html>

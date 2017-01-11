@@ -40,4 +40,6 @@ let server = app.listen(config.SERVER_PORT,config.SERVER_IP,  function (error)
     let host = server.address().address;
     let port = server.address().port;
     console.log(`Success!,  http://${host}:${port} `);
+
+    require("./chat/Chat.js").init(server);
 });

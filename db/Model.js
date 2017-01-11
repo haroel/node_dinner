@@ -147,7 +147,7 @@ model.addUser = function * (id,userInfo) {
             ++sameIpNum;
         }
     }
-    if (sameIpNum >= 2)
+    if (sameIpNum >= 200)
     {
         return Promise.reject(ErrorCode.ERROR_ROOMID_IP_ERROR);
     }
