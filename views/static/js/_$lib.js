@@ -208,3 +208,53 @@ g.MultiHash = function () {
         }
     }
 };
+
+jQuery.fn.extend({
+    /**
+     * ctrl+enter提交表单
+     * @param {Function} fn 操作后执行的函数
+     * @param {Object} thisObj 指针作用域
+     */
+    ctrlSubmit:function(fn,thisObj){
+        var obj = thisObj || this;
+        var stat = false;
+        return this.each(function(){
+            $(this).keyup(function(event){
+                //只按下ctrl情况，等待enter键的按下
+                if(event.keyCode == 17){
+                    stat = true;
+                    //取消等待
+                    setTimeout(function(){
+                        stat = false;
+                    },300);
+                }
+                if(event.keyCode == 13 && (stat || event.ctrlKey)){
+                    fn.call(obj,event);
+                }
+            });
+        });
+    }
+});
+
+
+g.getImageSize = function ( src )
+{
+    var imgsize={
+        width:0,
+        height:0
+    };
+    image=new image();
+    image.src=src;
+    imgsize.width =image.width;
+    imgsize .height=image.height;
+    return imgsize;
+};
+
+g.getTime0 = function()
+{
+    let d = new Date();
+    function p(s) {
+        return s < 10 ? '0' + s: s;
+    }
+    return p(d.getHours()) +":"+ p(d.getMinutes()) +":"+p(d.getSeconds());
+};

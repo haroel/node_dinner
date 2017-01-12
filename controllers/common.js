@@ -11,7 +11,15 @@ let handlers = {};
 
 handlers["GET /about.html"] = function *(next)
 {
-    this.body = viewtemplate("about.html");
+    let req = this.request;
+    let ip = req["ip"];
+    if (ip === "192.168.90.57")
+    {
+        this.body = viewtemplate("about1.html");
+    }else
+    {
+        this.body = viewtemplate("about.html");
+    }
 };
 
 handlers["GET /"] = handlers["GET /about.html"];

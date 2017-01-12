@@ -78,7 +78,7 @@
                 'border' : '1px solid '+opts.theme,
                 'position':'fixed',
                 'font-family':'Microsoft Yahei',
-                'z-index': '9999'
+                'z-index': '999'
             }).find('.body').css({
                 'width': opts.width+'px',
                 'height' : opts.height+'px',
@@ -100,9 +100,8 @@
                 'font-size': '13px',
                 'padding':'8px 4px 0px 5px',
                 'color':'#fff',
-                'cursor': 'pointer',
-                'font-family':'Microsoft Yahei'
-            }
+                'cursor': 'pointer'
+            };
 
             obj.find('.title').css(titleCss).find('i').css({
                 'font-size': '15px'
@@ -149,4 +148,4 @@
             });
         }
     };
-})(jQuery)
+})(jQuery);
