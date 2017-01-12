@@ -14,7 +14,7 @@ var EVENT =
     USER_MESSAGE:"user_message",
     USER_IMAGE:"user_image",
     USER_LOGIN:"user_login", // 用户Login
-    USER_DISCONNECT:"user_disconnect",
+    USER_DISCONNECT:"disconnect",
 
     // 发回给客户端的事件类型
     PUSH_USER_LOGIN_SUCCESS:"push_user_login_success", // 用户Login
@@ -134,7 +134,7 @@ function _doWithClientSocket(io,socket)
         socket.emit(EVENT.PUSH_USER_LOGIN_SUCCESS,msgList.slice(-10),_getIpFromSocket(socket));
 
         let msgObj = _createChatMsg(
-            { type: MESSAGE.SYSTEM,
+            {type: MESSAGE.SYSTEM,
                 action:ACTION.LOGIN,
                 num:userMap.size
             },socket );

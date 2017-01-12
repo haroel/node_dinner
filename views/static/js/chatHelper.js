@@ -10,7 +10,7 @@ var EVENT =
     USER_MESSAGE:"user_message",
     USER_IMAGE:"user_image",
     USER_LOGIN:"user_login", // 用户Login
-    USER_DISCONNECT:"user_disconnect",
+    USER_DISCONNECT:"disconnect",
 
     // 发回给客户端的事件类型
     PUSH_USER_LOGIN_SUCCESS:"push_user_login_success", // 用户Login
@@ -40,6 +40,7 @@ var ACTION = {
     LOGIN_OUT:"login_out"
 };
 
+var roomId = roomId;
 var ChatController = function () {
     this.socket = null;
     this.clientIp = "";
@@ -228,7 +229,7 @@ ChatController.prototype.initView = function ()
     {
         that.appendMsg({
             type:MESSAGE.OTHER,
-            msg:"<p class='chat_error'>"+errorStr+"</p>"
+            msg:"<p class='chat_error'>错误，"+errorStr+"</p>"
         });
     };
     $("#chat_img").change(function ()
@@ -237,18 +238,18 @@ ChatController.prototype.initView = function ()
             var file = this.files[0];
             if (file.size > 1024 * 1024)
             {
-                _sendError("请选择小于1MB的图片文件");
+                _sendError("请选择小于1MB的图片文件！");
                 return;
             }
             var reg = /gif|png|jpg|jpeg/;
             if ( !reg.test( file.name )  )
             {
-                _sendError("请选择图片文件");
+                _sendError("请选择图片文件！");
                 return;
             }
             var reader = new FileReader();
             if (!reader) {
-                _sendError("该浏览器不支持文件读取操作!");
+                _sendError("该浏览器不支持文件读取操作！");
                 return;
             }
             reader.onload = function(e) {
@@ -267,7 +268,7 @@ ChatController.prototype.initView = function ()
                     })
                 }else
                 {
-                    _sendError("请选择图片文件");
+                    _sendError("请选择图片文件！");
                 }
             };
             reader.readAsDataURL(file);

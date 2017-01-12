@@ -77,8 +77,7 @@
                 'bottom' : opts.bottom+'px',
                 'border' : '1px solid '+opts.theme,
                 'position':'fixed',
-                'font-family':'Microsoft Yahei',
-                'z-index': '999'
+                'z-index': '1000'
             }).find('.body').css({
                 'width': opts.width+'px',
                 'height' : opts.height+'px',
@@ -86,7 +85,6 @@
                 'padding':'10px',
                 'overflow-x':'hidden',
                 'overflow-y':'auto',
-                'font-family':'Microsoft Yahei',
                 'font-size' : '12px'
             });
 
