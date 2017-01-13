@@ -250,9 +250,15 @@ g.getImageSize = function ( src )
     return imgsize;
 };
 
-g.getTime0 = function()
+g.getTime0 = function( d )
 {
-    let d = new Date();
+    if (!d)
+    {
+        d = new Date();
+    }else
+    {
+        d = new Date(d);
+    }
     function p(s) {
         return s < 10 ? '0' + s: s;
     }

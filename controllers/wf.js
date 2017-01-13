@@ -24,8 +24,9 @@ handlers["GET /wf_create.html"] = function *(next)
     let content = viewtemplate("wf_create.html");
     content = content.replace("{title}","创建房间");
     let _links =[
-        "https://www.ele.me/shop/308563",
-        "https://www.ele.me/shop/257376"
+        "https://www.ele.me/shop/431784",
+        "https://www.ele.me/shop/257376",
+        "https://www.ele.me/shop/342141"
     ];
     let _s = "<ul>";
     for (let l of _links)

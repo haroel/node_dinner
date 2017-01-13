@@ -12,7 +12,7 @@ let handlers = {};
 handlers["GET /about.html"] = function *(next)
 {
     let req = this.request;
-    let ip = req["ip"];
+    let ip = require("../__config.js").SERVER_IP;
     if (ip === "192.168.90.57")
     {
         this.body = viewtemplate("about1.html");

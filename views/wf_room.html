@@ -48,19 +48,6 @@
     {
         font-size:0.7em;
     }
-
-    #chat_loginWrapper {
-        position: absolute;
-        background-color: rgba(5, 5, 5, .8);
-        text-align: center;
-        vertical-align: middle;
-        color: #fff;
-        display: block;
-        left:0px;
-        top:0px;
-        bottom: 0px;
-        right: 0px;
-    }
 </style>
 <script>
     var menuListData = null;
@@ -151,7 +138,7 @@
                 {
                     showLeftTime(leftTime);
                 }
-                var itemTemplate = $("#menuListDiv").html();
+                var itemTemplate = document.getElementById("shop-menu-template").innerHTML;
                 var contens = "";
                 var len = _o.list.length;
                 for (var i= 0;i < len;++i)
@@ -321,6 +308,23 @@
         } );
     }
 </script>
+<script type="text" id="shop-menu-template">
+   <div class="col-sm-6 col-md-3 col-lg-2" style="height: 270px;visibility: hidden">
+    <div class="itemHover" style="text-align: center;height: 260px">
+        <img src="{img}"
+             width="100px"
+             height="100px"
+             alt="{name}" title ="{tooltip}" data-toggle="tooltip" data-placement="bottom" >
+        <h5>{star}</h5>
+        <h3 style="height: 33px;font-size: 1.25em">{name}</h3>
+        <div>
+            <p>￥{price}</p>
+            <button class="btn btn-success selectBtn"
+                    id="{menuId}" onclick="openModal(this)">选择</button>
+        </div>
+    </div>
+    </div>
+</script>
 <body class="common">
     <div id="left-menu"></div>
     <nav class="navbar navbar-default navbar-fixed-top navbarzindex" role="navigation" style="height: 120px;">
@@ -343,23 +347,6 @@
     </nav>
     <div class="content-wrap container menuList">
         <div class="row" style="margin-bottom: 20px" id="menuListDiv">
-
-            <div class="col-sm-6 col-md-3 col-lg-2" style="height: 270px;visibility: hidden">
-                <div class="itemHover" style="text-align: center;height: 260px">
-                    <img src="{img}"
-                         width="100px"
-                         height="100px"
-                         alt="{name}" title ="{tooltip}" data-toggle="tooltip" data-placement="bottom" >
-                    <h5>{star}</h5>
-                    <h3 style="height: 33px;font-size: 1.25em">{name}</h3>
-                    <div>
-                        <p>￥{price}</p>
-                        <button class="btn btn-success selectBtn"
-                                id="{menuId}" onclick="openModal(this)">选择</button>
-                    </div>
-                </div>
-            </div>
-
         </div>
     </div>
     <div id="foot"></div>
@@ -406,10 +393,12 @@
             <p>
                 <span id="chat_nickname" class="nickname"> </span>    <span id="chat_num"></span>
             </p>
-            <div id="chat_content" style="top: 1px; height: 395px;width: 100%;overflow:auto;background-color: #FFFFFF;">
-                <div class="chat_item_left chat_bg">
+            </p>
+            <div id="chat_content" class="chat_panel" >
+                <div class="chat_item_left chat_bg" uuid="$uuid" time="$time">
                     <p class="ptitle">
                         ip {ip} <span class="nickname">{nickname}</span> <span>({time})</span>
+                        <span class='fa fa-fw fa-remove chat_trash' title="删除" onclick="chatItemRemoveClick(this)"></span>
                     </p>
                     <p class="chat_content">
                         {content}
@@ -420,9 +409,11 @@
                         <span class="nickname">{nickname}</span> {action} <span>({time})</span>
                     </p>
                 </div>
-                <div class="chat_item_right chat_bg">
+                <div class="chat_item_right chat_bg" uuid="$uuid" time="$time">
                     <p class="ptitle">
                         ip {ip} <span class="nickname">{nickname}</span> <span>({time})</span>
+                        <span class='fa fa-fw fa-remove chat_trash' title="删除"  onclick="chatItemRemoveClick(this)"></span>
+                        <span class='fa fa-fw fa-trash chat_trash' title="撤回" onclick="chatItemRevokeClick(this)"></span>
                     </p>
                     <p class="chat_content">
                         {content}
@@ -432,7 +423,7 @@
             <div class="row" style="width: 100%; margin-left: 2px;">
                 <button class="btn btn-xs btn-info" type="button" onclick="showGif()">表情</button>
                 <input type="file" id="chat_img" name="imgfile" style="display: none">
-                <button class="btn btn-xs btn-danger" type="button" onclick="_sendImg()">图片</button>
+                <button class="btn btn-xs btn-danger" type="button" onclick='$("#chat_img").click()'>图片</button>
             </div>
             <div class="row" style=" text-align: center; margin-left: 1px;margin-right: 1px">
                 <textarea id="messageInput" rows="3" style="width: 100%; resize: none;"  placeHolder="Ctrl + Enter发送消息"></textarea>

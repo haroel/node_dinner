@@ -16,10 +16,14 @@ var EVENT =
     USER_LOGIN:"user_login", // 用户Login
     USER_DISCONNECT:"disconnect",
 
+    USER_REVOKE_MESSAGE:"user_revoke",
+
     // 发回给客户端的事件类型
     PUSH_USER_LOGIN_SUCCESS:"push_user_login_success", // 用户Login
     PUSH_USER_EXISTED:"push_user_existed", // 用户名已存在
     PUSH_MESSAGE:"push_message",
+    PUSH_REVOKE_MESSAGE:"push_revoke_message",
+    PUSH_MESSAGE_SEND_SUCCESS:"push_message_send_success",
 
     // 客户端的事件
     CLIENT_FILE_ERROR:"client_file_error",
@@ -41,8 +45,18 @@ var MESSAGE =
 // 事件动作
 var ACTION = {
     LOGIN:"login",
-    LOGIN_OUT:"login_out"
+    LOGIN_OUT:"login_out",
+    REVOKE:"revoke"
 };
+
+
+
+let __gen_chat_uuid  = (function () {
+    let _chat_id = 0;
+    return function ( name ) {
+        return "chat_" +  name + "_" + (_chat_id++);
+    }
+})();
 
 let roomInfos = new Map();
 
@@ -86,15 +100,16 @@ function _createChatMsg( info ,socket )
 {
     //trace(socket)
     let msgObj = info;
-    let d = new Date();
-    function p(s) {
-        return s < 10 ? '0' + s: s;
-    }
-    let time = `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
-    msgObj.time = time;
+    //let d = new Date();
+    //function p(s) {
+    //    return s < 10 ? '0' + s: s;
+    //}
+    //let time = `${p(d.getHours())}:${p(d.getMinutes())}:${p(d.getSeconds())}`;
+    msgObj.time = Date.now();
     msgObj.ip = _getIpFromSocket(socket);
     msgObj.nickname=socket.nickname;
     msgObj.index=socket.userIndex;
+    msgObj.uuid = __gen_chat_uuid( msgObj.nickname );
     return msgObj;
 }
 
@@ -180,14 +195,16 @@ function _doWithClientSocket(io,socket)
         {return;}
         let msgObj = _createChatMsg(
             { type: MESSAGE.TEXT,
-                msg:data.msg
+                msg:data.msg,
+                _uuid:data._uuid
             },socket );
 
         roomInfo.msgList.push(msgObj);
         // 把信息发送给除我之外的所有连接用户
-        //io.sockets.in(roomId).emit(EVENT.PUSH_MESSAGE, msgObj);
-
         socket.broadcast.to(roomId).emit(EVENT.PUSH_MESSAGE,msgObj);
+        // 通知发送者该条消息已转发
+        socket.emit(EVENT.PUSH_MESSAGE_SEND_SUCCESS, {uuid:msgObj.uuid,_uuid:data._uuid} );
+
     });
 
     socket.on( EVENT.USER_IMAGE, (data)=>
@@ -199,13 +216,45 @@ function _doWithClientSocket(io,socket)
         {return;}
         let msgObj = _createChatMsg(
             { type: MESSAGE.IMAGE,
-                msg:data
+                msg:data.msg,
+                _uuid:data._uuid // 标记是客户端生成的uuid
             },socket );
         roomInfo.msgList.push(msgObj);
         // 把图片信息发送给除我之外的所有连接用户
         socket.broadcast.to(roomId).emit(EVENT.PUSH_MESSAGE,msgObj);
-        //io.sockets.in(roomId).emit(EVENT.PUSH_MESSAGE, msgObj);
+        // 通知发送者该条消息已转发
+        socket.emit(EVENT.PUSH_MESSAGE_SEND_SUCCESS, {uuid:msgObj.uuid,_uuid:data._uuid} );
+    });
 
+    // 消息撤回
+    socket.on( EVENT.USER_REVOKE_MESSAGE, (data)=>
+    {
+        trace("收到消息",EVENT.USER_REVOKE_MESSAGE);
+        let roomId = socket.roomId;
+        let roomInfo = roomInfos.get( roomId );
+        if (!roomInfo)
+        {return;}
+        let msgList = roomInfo.msgList;
+        let _uuid = data._uuid;
+
+        let len = msgList.length;
+        for (let i = 0;i < len;i++)
+        {
+            if (msgList[i]._uuid === _uuid || msgList[i].uuid === _uuid )
+            {
+
+                let msgObj = _createChatMsg(
+                    { type: MESSAGE.SYSTEM,
+                        action:ACTION.REVOKE,
+                        revoke_uuid: msgList[i].uuid // 标记是客户端生成的uuid
+                    },socket );
+
+                msgList.splice(i,1,msgObj);
+                io.sockets.in(roomId).emit(EVENT.PUSH_REVOKE_MESSAGE, msgObj);
+                trace("消息撤回成功",_uuid);
+                break;
+            }
+        }
     });
 
 }

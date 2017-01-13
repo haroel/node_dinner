@@ -20,7 +20,7 @@ app.use( function *(next) {
     yield next;
     execTime = new Date().getTime() - start;
     this.response.set('X-Response-Time', `${execTime}ms`);
-    console.log(`Process ${this.request.method} ${this.request.ip}  ${this.request.url} 处理时间${execTime}ms...`);
+    //console.log(`Process ${this.request.method} ${this.request.ip}  ${this.request.url} 处理时间${execTime}ms...`);
     yield controller.endHandler(this);
 });
 

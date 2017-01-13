@@ -1,3 +1,16 @@
+
+#chat_loginWrapper {
+    position: absolute;
+    background-color: rgba(5, 5, 5, .8);
+    text-align: center;
+    vertical-align: middle;
+    color: #fff;
+    display: block;
+    left:0px;
+    top:0px;
+    bottom: 0px;
+    right: 0px;
+}
 #chat_content .chat_bg
 {
     margin-left: 5px;
@@ -6,6 +19,10 @@
     background-color: azure;
 }
 
+.chat_panel
+{
+    top: 1px; height: 395px;width: 100%;overflow:auto;background-color: #FFFFFF;
+}
 #chat_content .chat_item_left .ptitle
 {
     font-size: 0.7em;
@@ -36,6 +53,15 @@
     font-size: 0.8em;
     text-align: center;
     color: #B7B7B7;
+    display: block;
+}
+
+#chat_content .chat_item_other
+{
+    font-size: 0.8em;
+    text-align: center;
+    color: #f27474;
+    display: block;
 }
 
 #emojiWrapper {
@@ -63,9 +89,12 @@
     height: 120px;
 }
 
-.chat_error
+.chat_trash {
+    cursor:pointer;
+    /*position: relative;*/
+    /*display: inline-block;*/
+}
+.chat_trash:hover
 {
-    font-size: 0.8em;
     color: #ff0000;
-    text-align: center;
 }

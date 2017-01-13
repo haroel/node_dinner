@@ -12,10 +12,14 @@ var EVENT =
     USER_LOGIN:"user_login", // 用户Login
     USER_DISCONNECT:"disconnect",
 
+    USER_REVOKE_MESSAGE:"user_revoke",
+
     // 发回给客户端的事件类型
     PUSH_USER_LOGIN_SUCCESS:"push_user_login_success", // 用户Login
     PUSH_USER_EXISTED:"push_user_existed", // 用户名已存在
     PUSH_MESSAGE:"push_message",
+    PUSH_REVOKE_MESSAGE:"push_revoke_message",
+    PUSH_MESSAGE_SEND_SUCCESS:"push_message_send_success",
 
     // 客户端的事件
     CLIENT_FILE_ERROR:"client_file_error",
@@ -37,10 +41,29 @@ var MESSAGE =
 // 事件动作
 var ACTION = {
     LOGIN:"login",
-    LOGIN_OUT:"login_out"
+    LOGIN_OUT:"login_out",
+    REVOKE:"revoke"
 };
 
 var roomId = roomId;
+
+var __gen_chat_uuid = (function ( )
+{
+    let _chat_id = 0;
+    return function ( ip) {
+        return "chat_" +  Date.now() + "_" + ip + "_" + (_chat_id++);
+    }
+})();
+
+var _createChatMsg = function( info )
+{
+    //trace(socket)
+    let msgObj = info;
+    msgObj.time = Date.now();
+    msgObj.uuid = __gen_chat_uuid( info.ip);
+    return msgObj;
+};
+
 var ChatController = function () {
     this.socket = null;
     this.clientIp = "";
@@ -57,13 +80,10 @@ ChatController.prototype.init = function()
         $("#chat_login").css("display","block");
         $("#info").html("输入一个昵称!");
         $("#nickNameInput").focus();
-
-        console.log("socket 连接成功");
         hideGif();
     });
     this.socket.on(EVENT.CLIENT_SOCKET_ERROR, function(err) {
         alert("socket 错误. " + err.toString());
-
         hideGif();
     });
     this.socket.on(EVENT.CLIENT_SOCKET_DISCONNECT, function(err) {
@@ -93,6 +113,19 @@ ChatController.prototype.init = function()
         that.appendMsg(msgObj);
     });
 
+    this.socket.on(EVENT.PUSH_MESSAGE_SEND_SUCCESS , function(msgObj)
+    {
+        var pp = $("#chat_content").find('[uuid="'+ msgObj._uuid +'"]');
+        pp.attr("uuid",msgObj.uuid);
+        console.log(EVENT.PUSH_MESSAGE_SEND_SUCCESS);
+    });
+
+    this.socket.on( EVENT.PUSH_REVOKE_MESSAGE , function(msgObj)
+    {
+        var pp = $("#chat_content").find('[uuid="'+ msgObj.revoke_uuid +'"]');
+        var removeStr = that.appendMsg(msgObj,true);
+        that.removeChaItem(pp, removeStr );
+    });
     //监听 ctrl+enter发送
     $("#messageInput").ctrlSubmit(function(event){
         //提交代码写在这里
@@ -108,7 +141,7 @@ ChatController.prototype.showHistroyMsgList = function(msgList)
     }
 };
 
-ChatController.prototype.appendMsg = function( data )
+ChatController.prototype.appendMsg = function( data , justParseData )
 {
     var msg ="";
     switch (data.type)
@@ -117,7 +150,7 @@ ChatController.prototype.appendMsg = function( data )
         {
             msg = this["chat_item_sys"];
             msg=msg.replace("{nickname}",data.nickname);
-            msg=msg.replace("{time}",data.time);
+            msg=msg.replace("{time}",g.getTime0(data.time) );
             switch (data.action)
             {
                 case ACTION.LOGIN:
@@ -132,6 +165,11 @@ ChatController.prototype.appendMsg = function( data )
                     $("#chat_num").html( "(在线:" + data.num +"人)" );
                     break;
                 }
+                case ACTION.REVOKE:
+                {
+                    msg=msg.replace("{action}","撤回了一条消息");
+                    break;
+                }
             }
             break;
         }
@@ -144,8 +182,12 @@ ChatController.prototype.appendMsg = function( data )
             {
                 msg=msg = this["chat_item_left"];
             }
+            msg=msg.replace("$time",data.time);
+            msg=msg.replace("$uuid",data.uuid);
+
             msg=msg.replace("{nickname}",data.nickname);
-            msg=msg.replace("{time}",data.time);
+            msg=msg.replace("{time}",g.getTime0(data.time) );
+
             msg=msg.replace("{ip}",data.ip);
             msg=msg.replace("{content}",data.msg);
 
@@ -155,9 +197,8 @@ ChatController.prototype.appendMsg = function( data )
             {
                 msg = msg.replace(reg, function (match, index)
                 {
-                    var __img = '<img class="emoji" src="static/emoji/4520/' + index + '.gif" />';
-                    return __img;
-                } )
+                    return '<img class="emoji" src="static/emoji/4520/' + index + '.gif" />';
+                });
             }
             break;
         }
@@ -170,17 +211,15 @@ ChatController.prototype.appendMsg = function( data )
             {
                 msg=msg = this["chat_item_left"];
             }
+            msg=msg.replace("$time",data.time);
+            msg=msg.replace("$uuid",data.uuid);
+
             msg=msg.replace("{nickname}",data.nickname);
-            msg=msg.replace("{time}",data.time);
+            msg=msg.replace("{time}",g.getTime0(data.time) );
+
             msg=msg.replace("{ip}",data.ip);
             var imageData = data.msg;
-            var imageSize = data.size;
             var _s = "";
-            //if (imageSize.width > 400)
-            //{
-            //    var s = 400/imageSize.width;
-            //    _s = 'width="' + 400 + '" height="' + imageSize.height * s + '" ';
-            //}
             msg=msg.replace("{content}", '<img '+_s+' src="' + imageData + '"/>'  );
             break;
         }
@@ -192,9 +231,14 @@ ChatController.prototype.appendMsg = function( data )
         default :
         {break;}
     }
+    if (justParseData)
+    {
+        return msg;
+    }
     var chatContent = $("#chat_content");
     chatContent.append(msg);
     chatContent.scrollTop(chatContent[0].scrollHeight);
+    return msg;
 };
 
 ChatController.prototype.initView = function ()
@@ -220,17 +264,20 @@ ChatController.prototype.initView = function ()
         var target = e.target;
         if (target.nodeName.toLowerCase() == 'img') {
             var messageInput = document.getElementById('messageInput');
-            messageInput.focus();
+            //messageInput.focus();
             messageInput.value = messageInput.value + '[emoji:' + target.title + ']';
         }
     }, false);
 
     var _sendError = function (errorStr)
     {
-        that.appendMsg({
+        var msgObj = _createChatMsg( {
             type:MESSAGE.OTHER,
-            msg:"<p class='chat_error'>错误，"+errorStr+"</p>"
-        });
+            nickname:that.nickname,
+            ip:that.clientIp,
+            msg:"<p class='chat_item_other'>错误，"+errorStr+"</p>"
+        } );
+        that.appendMsg(msgObj);
     };
     $("#chat_img").change(function ()
     {
@@ -256,16 +303,13 @@ ChatController.prototype.initView = function ()
                 var _imgData = e.target.result;
                 if (_imgData.indexOf("image") > 0)
                 {
-                    that.socket.emit(EVENT.USER_IMAGE, _imgData );
-
-                    that.appendMsg({
-                        type:MESSAGE.IMAGE,
-
-                        time:g.getTime0(),
-                        nickname:that.nickname,
-                        ip:that.clientIp,
-                        msg:_imgData
-                    })
+                    var msgObj = _createChatMsg( {type:MESSAGE.IMAGE,
+                                                 nickname:that.nickname,
+                                                 ip:that.clientIp,
+                                                 msg:_imgData
+                                                 } );
+                    that.appendMsg(msgObj);
+                    that.socket.emit(EVENT.USER_IMAGE, { msg:_imgData,_uuid:msgObj.uuid} );
                 }else
                 {
                     _sendError("请选择图片文件！");
@@ -273,7 +317,17 @@ ChatController.prototype.initView = function ()
             };
             reader.readAsDataURL(file);
         }
-    })
+    });
+    $("#messageInput").focus(function(){
+        hideGif();
+    });
+};
+ChatController.prototype.removeChaItem = function ( element ,str )
+{
+    element.animate({opacity:0.0},600,function()
+    {
+        element.replaceWith(str);
+    });
 };
 
 //*********************************************
@@ -306,16 +360,16 @@ function sendMessage()
         infoDialog("请输入聊天信息");
         return;
     }
-    // 聊天信息发送到服务器
-    controller.socket.emit(EVENT.USER_MESSAGE, {msg:messageStr} );
-    controller.appendMsg({
+    var msgObj = _createChatMsg( {
         type:MESSAGE.TEXT,
-
-        time:g.getTime0(),
         nickname:controller.nickname,
         ip:controller.clientIp,
         msg:messageStr
-    });
+    } );
+    controller.appendMsg(msgObj);
+    // 聊天信息发送到服务器
+    controller.socket.emit(EVENT.USER_MESSAGE, { msg:messageStr,_uuid:msgObj.uuid} );
+
     $("#messageInput").val("");
 }
 
@@ -337,7 +391,27 @@ function hideGif()
     $("#emojiWrapper").css("display","none");
 }
 
-function _sendImg()
+function chatItemRemoveClick( target )
 {
-    $("#chat_img").click();
+    controller.removeChaItem( $(target).parents(".chat_bg"),"" );
+}
+function chatItemRevokeClick(target)
+{
+    var element = $(target);
+    var pp = element.parents(".chat_item_right");
+    var time = parseInt( pp.attr("time") );
+    // 超过2分钟则不允许撤回
+    if ( (Date.now() - time) > 2 * 60 * 1000)
+    {
+        var that = controller;
+        var msgObj = _createChatMsg( {
+            type:MESSAGE.OTHER,
+            nickname:that.nickname,
+            ip:that.clientIp,
+            msg:"<p class='chat_item_other'>超过2分钟,无法撤回!</p>"
+        } );
+        that.appendMsg(msgObj);
+        return
+    }
+    controller.socket.emit(EVENT.USER_REVOKE_MESSAGE, {_uuid:pp.attr("uuid")} );
 }
