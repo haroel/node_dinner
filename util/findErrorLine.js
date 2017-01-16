@@ -151,7 +151,7 @@ module.exports.search2 = function ( version, params  )
         }else
         {
             let dirPath = main_dir_path + version + "/Client/Resources/lua";
-            console.log("lua查询目录",dirPath)
+            console.log("lua查询目录",dirPath);
             let files = [];
             loopDir(dirPath,files);
             let __map = new Map();
@@ -255,4 +255,48 @@ module.exports.getVersionList = function * ()
     return result;
 };
 
+var fs = require('fs');
+var path = require('path');
+var child_process = require('child_process');
+var spawn = child_process.spawn;
+
+
+function spawnPromise(  svnpath,localpath )
+{
+    let handler = function ( resolve , reject,params )
+    {
+        let isSuccess = true;
+        let free = spawn('svn', params);
+        // 捕获标准输出并将其打印到控制台
+        free.stdout.on('data', function (data) {
+            trace('-' + data);
+        });
+        // 捕获标准错误输出并将其打印到控制台
+        free.stderr.on('data', function (data) {
+            trace('standard error output:\n' + data);
+            isSuccess = false;
+        });
+        // 注册子进程关闭事件
+        free.on('exit', function (code, signal)
+        {
+            trace('child process eixt ,exit:' + code);
+            if (isSuccess)
+            {
+                resolve(  );
+            }else
+            {
+                reject( " error" );
+            }
+        });
+    };
+    return new Promise( handler );
+}
+
+let _lua_code_path = "/Users/howe/Documents/RSLG/lua-code";
+
+module.exports.svnCheckToVersion = function *( version )
+{
+
+
+};
 

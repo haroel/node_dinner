@@ -47,30 +47,36 @@
 <script>
     window.onload=function()
     {
-        $.ajax( "lua/getVersionList", {dataType:"text"})
-            .done(function(data)
-            {
-                var textStr ="";
-                var list = JSON.parse(data);
-                list.reverse();
-                for(var i=0;i<list.length;i++)
-                {
-                    textStr+= "<option>" + list[i] + "</option>"
-                }
-                $("#_comboBox")[0].innerHTML=textStr;
-            })
-            .fail(function(xhr, status)
-            {
-                console.log("error"+status);
-                $("#_comboBox")[0].innerHTML="<option>" + "连接失败" +"</option>";
-            }).always(function () {
-
-            });
+//        $.ajax( "lua/getVersionList", {dataType:"text"})
+//            .done(function(data)
+//            {
+//                var textStr ="";
+//                var list = JSON.parse(data);
+//                list.reverse();
+//                for(var i=0;i<list.length;i++)
+//                {
+//                    textStr+= "<option>" + list[i] + "</option>"
+//                }
+//                $("#_comboBox")[0].innerHTML=textStr;
+//            })
+//            .fail(function(xhr, status)
+//            {
+//                console.log("error"+status);
+//                $("#_comboBox")[0].innerHTML="<option>" + "连接失败" +"</option>";
+//            }).always(function () {
+//
+//            });
 
     };
     function onClickSubmit()
     {
         // AJAX获取http数据
+        var _version = $("#versionInput")[0].value;
+        if (!_version)
+        {
+            errorDialog("请输入版本号！");
+            return;
+        }
         var _log = $("#_logInput")[0].value;
         if (!_log)
         {
@@ -79,15 +85,14 @@
         }
         _log = btoa(_log);// Base64
         showLoading();
-        var _version = $("#_comboBox").find("option:selected").text();
-        $.ajax( "lua/getLog",
+        _version = "branch_0.2.0." + _version;
+        $.ajax( "lua/get_Log",
         {
             dataType:"text",
             data:{
                 version :_version,
                 errorlog:_log
             }
-
         }).done (function(data)
         {
             $("#output").html( data );
@@ -108,11 +113,9 @@
                 <h1>lua查错</h1>
             </div>
             <div class="row">
-                <div class="col-sm-3 col-xs-12 center">选择版本号:</div>
+                <div class="col-sm-3 col-xs-12 center">输入版本号:</div>
                 <div class="col-sm-4 col-xs-8 center">
-                    <select class="form-control" id="_comboBox">
-                        <option>正在连接</option>
-                    </select>
+                    <input id="versionInput" type="text" maxlength="6" class="form-control" width="200" data-toggle="tooltip" data-placement="top" title="输入svn上的版本号,比如56.1,那么这里请写56.1" placeholder="比如56.1">
                 </div>
             </div>
             <div class="row">

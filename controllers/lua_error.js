@@ -74,6 +74,46 @@ handlers["GET /lua/getLog"] = function *(next)
     }
 };
 
+handlers["GET /lua/get_Log"] = function *(next)
+{
+    let req = this.request;
+    let version = req.query["version"];
+    if (!version)
+    {
+        console.log("<<<< result 访问错误");
+        this.status = 400;
+        return;
+    }
+
+    let errorlog = new Buffer(req.query["errorlog"], 'base64').toString();
+    let reg = /\'(\S+)\'\?*\:(\d+)/gm;
+    console.log("\n >>> client Ip %s version %s Time: %s",req.ip,version , getNowFormatDate());
+
+    let params = [];
+
+    let execRets = reg.exec(errorlog);
+    while(execRets)
+    {
+        params.push({func:execRets[1],num:execRets[2]});
+        execRets = reg.exec(errorlog);
+    }
+    console.log("参数",params);
+    // Promise + generator ES6写法
+    try
+    {
+        let t1 = Date.now();
+        let result = yield findError.search2(version, params);
+        console.log("查询时间",Date.now()-t1);
+        console.log("<<<< result ",result.length);
+        this.body = result;
+
+    }catch(error)
+    {
+        this.body = error.toString();
+    }
+};
+
+
 handlers["GET /lua/getVersionList"] = function *(next)
 {
     let req = this.request;
