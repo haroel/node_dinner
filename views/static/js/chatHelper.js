@@ -175,7 +175,7 @@ ChatController.prototype.appendMsg = function( data , justParseData )
         }
         case MESSAGE.TEXT:
         {
-            if (data.ip === this.clientIp)
+            if (data.ip === this.clientIp && this.nickname === data.nickname)
             {
                 msg=msg = this["chat_item_right"];
             }else
@@ -355,7 +355,7 @@ function sendMessage()
 {
     hideGif();
     var messageStr = $("#messageInput").val();
-    if (!messageStr )
+    if (!messageStr || messageStr.length < 1)
     {
         infoDialog("请输入聊天信息");
         return;
